@@ -1,0 +1,124 @@
+.home-container {
+    font-family: 'Segoe UI', sans-serif;
+    color: #333;
+    background-color: #f5f9fc;
+  }
+  
+  .navbar {
+    padding: 1rem 0;
+  }
+  
+  .nav-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #007B9E;
+    text-decoration: none;
+  }
+  
+  .hero {
+    background: linear-gradient(135deg, #d7f0f4, #ffffff);
+    padding: 100px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .hero-content {
+    max-width: 650px;
+    text-align: center;
+  }
+  
+  .hero-title {
+    font-size: 2.5rem;
+    color: #007B9E;
+    font-weight: bold;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.2rem;
+    margin-top: 1rem;
+    color: #5f6f7a;
+  }
+  
+  .hero-buttons {
+    margin-top: 2rem;
+  }
+  
+  .features-section {
+    padding: 60px 20px;
+    background-color: #ffffff;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+    margin-bottom: 40px;
+    color: #007B9E;
+  }
+  
+  .features-grid {
+    display: grid;
+    gap: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  
+  .feature-card {
+    background-color: #f0fbfd;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(0, 123, 158, 0.1);
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .feature-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .feature-card h5 {
+    color: #007B9E;
+    margin-bottom: 10px;
+  }
+  
+  .testimonials-section {
+    padding: 60px 20px;
+    background-color: #e6f7fa;
+  }
+  
+  .testimonials-grid {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .testimonial {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    box-shadow: 0 4px 12px rgba(0, 123, 158, 0.1);
+  }
+  
+  .testimonial p {
+    font-style: italic;
+    color: #555;
+  }
+  
+  .testimonial h6 {
+    margin-top: 15px;
+    font-weight: 600;
+    color: #007B9E;
+  }
+  
+  .footer {
+    background-color: #007B9E;
+    color: white;
+    padding: 20px 0;
+    margin-top: 60px;
+  }
+  

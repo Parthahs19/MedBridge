@@ -1,0 +1,63 @@
+.view-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px 30px;
+    background: #f9fbfc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(100, 100, 100, 0.1);
+  }
+  
+  h2 {
+    text-align: center;
+    color: #112d4e;
+  }
+  
+  .form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  input[type='text'] {
+    padding: 10px;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+  }
+  
+  button {
+    padding: 10px;
+    background-color: #05445e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #033c4f;
+  }
+  
+  .status {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #444;
+  }
+  
+  .records-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .records-table th,
+  .records-table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+  
+  .records-table th {
+    background-color: #05445e;
+    color: white;
+  }
+  
