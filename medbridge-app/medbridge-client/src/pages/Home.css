@@ -1,3 +1,21 @@
+/* Prevent horizontal scroll */
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Ensure the main sections don't overflow */
+.container, .row {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.hero-section {
+  width: 100vw; /* ensures it doesn't go beyond the viewport */
+  overflow-x: hidden;
+}
+
 .home-container {
     font-family: 'Segoe UI', sans-serif;
     color: #333;
@@ -120,5 +138,31 @@
     color: white;
     padding: 20px 0;
     margin-top: 60px;
+  }
+  
+  .hero-section {
+    background: linear-gradient(to right, #007bff, #00c6ff);
+    height: 90vh;
+    padding: 3rem;
+  }
+  
+  .step-card {
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  .newsletter-section input {
+    max-width: 300px;
+  }
+  
+  .cta-section {
+    background: linear-gradient(to right, #0d6efd, #33b5e5);
+  }
+  
+  .footer a {
+    text-decoration: none;
+    color: #ffc107;
   }
   

@@ -1,28 +1,48 @@
 // src/components/LoginModal.js
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const LoginModal = ({ showModal, closeModal }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
- // In LoginModal.js (after successful login)
-const handleSubmit = async (e) => {
+  // In LoginModal.js (after successful login)
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // 🔐 Test bypass credentials (for development only)
+    const testEmail = 'test@medbridge.com';
+    const testPassword = 'test123';
+
+    // Check for test credentials before hitting API
+    if (email === testEmail) {
+      console.log('Test user logged in successfully (bypass mode)');
+
+      // Simulate setting tokens
+      localStorage.setItem('token', 'test-token');
+      localStorage.setItem('refreshToken', 'test-refresh-token');
+
+      // Redirect to dashboard
+      window.location.href = '/dashboard';
+      return;
+    }
+
+    // Normal login flow (for non-test users)
     try {
       const response = await axios.post('/api/user/login', { email, password });
       const { token, refreshToken } = response.data;
-      
-      // Store both the access token and refresh token
+
+      // Store both tokens
       localStorage.setItem('token', token);
       localStorage.setItem('refreshToken', refreshToken);
-  
+
       window.location.href = '/dashboard'; // Redirect to Dashboard
     } catch (error) {
-      console.log('Error logging in', error);
+      console.error('Error logging in:', error);
+      alert('Login failed. Please check your credentials.');
     }
   };
-  
 
   if (!showModal) return null;
 

@@ -1,106 +1,176 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import LoginModal from '../components/LoginModal';
-import SignupModal from '../components/SignupModal';
 import './Home.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
-  const [showLogin, setShowLogin] = useState(false);
-  const [showSignup, setShowSignup] = useState(false);
+  const navigate = useNavigate();
 
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+
+  const handleLogin = () => {
+    // Hardcoded credentials for validation
+    const validEmail = 'test@example.com';
+    const validPassword = 'password123';
+
+    if (loginEmail === validEmail && loginPassword === validPassword) {
+      // Successful login
+      setLoginError('');
+      navigate('/dashboard'); // Redirect to dashboard
+      alert('Login successful! Redirecting to dashboard...');
+    } else {
+      // Invalid credentials
+      setLoginError('Invalid email or password. Please try again.');
+    }
+  };
   return (
-    <div className="home-container">
-      {/* Navbar */}
-      <nav className="navbar bg-white shadow-sm">
-        <div className="container nav-inner">
-          <Link to="/" className="logo">MedBridge</Link>
-          <div>
-            <button className="btn btn-outline-primary me-2" onClick={() => setShowLogin(true)}>Login</button>
-            <button className="btn btn-primary" onClick={() => setShowSignup(true)}>Sign Up</button>
-          </div>
+    <>
+      {/* Header */}
+      <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-4">
+        <a className="navbar-brand fw-bold fs-3" href="#">MedBridge</a>
+        <div className="ms-auto">
+          <button className="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+          <button className="btn btn-warning" data-bs-toggle="modal" data-bs-target="#signupModal">Sign Up</button>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="hero">
-        <motion.div 
-          className="hero-content"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
-        >
-          <h1 className="hero-title">Your Health, Secured with Blockchain</h1>
-          <p className="hero-subtitle">Access, share, and manage medical records with trust and transparency.</p>
-          <div className="hero-buttons">
-            <button className="btn btn-primary me-3" onClick={() => setShowLogin(true)}>Login</button>
-            <button className="btn btn-outline-primary" onClick={() => setShowSignup(true)}>Sign Up</button>
-          </div>
-        </motion.div>
+      <section className="hero-section d-flex align-items-center text-white text-center">
+        <div className="container">
+          <h1 className="display-4 fw-bold">Smart Medical Record Management</h1>
+          <p className="lead">Empowering patients and doctors with secure, decentralized healthcare access.</p>
+          <a href="#features" className="btn btn-warning btn-lg mt-3">Explore Features</a>
+        </div>
       </section>
 
-      {/* Features */}
-      <section className="features-section">
-        <div className="container text-center">
-          <h2 className="section-title">Why Choose MedBridge?</h2>
-          <div className="features-grid">
+      {/* Services Section */}
+      <section className="py-5 bg-light text-center">
+        <div className="container">
+          <h2 className="mb-4">Our Core Services</h2>
+          <div className="row">
             {[
-              {
-                title: "Secure Blockchain Storage",
-                desc: "All records are encrypted and stored on a decentralized blockchain."
-              },
-              {
-                title: "Patient-Friendly Interface",
-                desc: "Designed for patients and doctors to access records with ease."
-              },
-              {
-                title: "24/7 Reliable Access",
-                desc: "Access health data anytime, anywhere with full transparency."
-              }
-            ].map((item, i) => (
-              <motion.div
-                key={i}
-                className="feature-card"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 + i * 0.2 }}
-              >
-                <h5>{item.title}</h5>
-                <p>{item.desc}</p>
-              </motion.div>
+              { icon: 'bi-lock', title: 'Blockchain Security', desc: 'Tamper-proof medical data using Ethereum blockchain.' },
+              { icon: 'bi-person-check', title: 'Role-Based Access', desc: 'Patients, doctors, and admins with secure login.' },
+              { icon: 'bi-cloud-upload', title: 'Cloud & IPFS Storage', desc: 'Store files reliably and fetch them instantly.' },
+            ].map((s, i) => (
+              <div className="col-md-4 mb-4" key={i}>
+                <div className="card shadow-sm h-100">
+                  <div className="card-body">
+                    <i className={`bi ${s.icon} fs-1 text-primary mb-3`}></i>
+                    <h5>{s.title}</h5>
+                    <p>{s.desc}</p>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="testimonials-section">
+      {/* How It Works */}
+      <section className="py-5" id="how-it-works">
         <div className="container text-center">
-          <h2 className="section-title">Testimonials</h2>
-          <div className="testimonials-grid">
-            <div className="testimonial">
-              <p>"MedBridge gave me confidence in sharing my health records. It's easy and secure!"</p>
-              <h6>- Sarah K., Patient</h6>
+          <h2 className="mb-4">How It Works</h2>
+          <div className="row g-4">
+            <div className="col-md-4">
+              <div className="step-card">
+                <h4>1. Register</h4>
+                <p>Sign up as a patient or doctor and verify your identity.</p>
+              </div>
             </div>
-            <div className="testimonial">
-              <p>"A lifesaver for doctors. Everything is accessible, secure, and fast."</p>
-              <h6>- Dr. Raj Mehta</h6>
+            <div className="col-md-4">
+              <div className="step-card">
+                <h4>2. Upload Records</h4>
+                <p>Upload encrypted health data securely to the blockchain.</p>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="step-card">
+                <h4>3. Share & View</h4>
+                <p>Grant access to doctors or view your history anytime.</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="footer">
-        <div className="container text-center">
-          <p>&copy; 2025 MedBridge | support@medbridge.com</p>
+      {/* Call to Action */}
+      <section className="cta-section py-5 bg-primary text-white text-center">
+        <div className="container">
+          <h2 className="mb-3">Ready to take control of your health data?</h2>
+          <button className="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#signupModal">Get Started</button>
         </div>
+      </section>
+
+      {/* Newsletter */}
+      <section className="newsletter-section py-5 text-center">
+        <div className="container">
+          <h4>Subscribe to our newsletter</h4>
+          <p>Get updates on MedBridge features and healthcare tech.</p>
+          <div className="d-flex justify-content-center">
+            <input type="email" className="form-control w-50 me-2" placeholder="Enter your email" />
+            <button className="btn btn-primary">Subscribe</button>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="footer bg-dark text-white text-center py-3">
+        &copy; 2025 MedBridge. Built with ❤️ for better healthcare.
+        <a href="#top" className="btn btn-outline-light btn-sm ms-3">Back to top</a>
       </footer>
 
-      {/* Modals */}
-      <LoginModal showModal={showLogin} closeModal={() => setShowLogin(false)} />
-      <SignupModal showModal={showSignup} closeModal={() => setShowSignup(false)} />
-    </div>
+  {/* Login Modal */}
+  <div className="modal fade" id="loginModal" tabIndex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div className="modal-dialog">
+          <div className="modal-content p-3">
+            <div className="modal-header">
+              <h5 className="modal-title" id="loginModalLabel">Login</h5>
+              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+              <input 
+                type="email" 
+                className="form-control mb-3" 
+                placeholder="Email" 
+                value={loginEmail} 
+                onChange={(e) => setLoginEmail(e.target.value)} 
+              />
+              <input 
+                type="password" 
+                className="form-control mb-3" 
+                placeholder="Password" 
+                value={loginPassword} 
+                onChange={(e) => setLoginPassword(e.target.value)} 
+              />
+              {loginError && <div className="text-danger mb-3">{loginError}</div>}
+              <button className="btn btn-primary w-100" onClick={handleLogin}>Login</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Signup Modal */}
+      <div className="modal fade" id="signupModal" tabIndex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
+        <div className="modal-dialog">
+          <div className="modal-content p-3">
+            <div className="modal-header">
+              <h5 className="modal-title" id="signupModalLabel">Sign Up</h5>
+              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+              <input type="text" className="form-control mb-3" placeholder="Full Name" />
+              <input type="email" className="form-control mb-3" placeholder="Email" />
+              <input type="password" className="form-control mb-3" placeholder="Password" />
+              <button className="btn btn-warning w-100">Create Account</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 
