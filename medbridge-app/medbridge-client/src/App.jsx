@@ -13,18 +13,12 @@ import { motion } from 'framer-motion';
 function App() {
   return (
     <Router>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      >
         <Routes>
           <Route path="/" element={<Home />} />
           {/* <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />*/
           <Route path="/dashboard" element={<Dashboard />} /> }
         </Routes>
-      </motion.div>
     </Router>
   );
 }
