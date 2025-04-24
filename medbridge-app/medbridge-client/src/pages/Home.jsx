@@ -1,37 +1,31 @@
-import React from 'react'; 
+import React from 'react';
 import { Link } from 'react-router-dom';
 import './Home.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import Navbar from '../components/NavBar';
+import Footer from '../components/Footer';
 
 const Home = () => {
   return (
     <>
-      {/* Navbar */}
-      <nav className="navbar navbar-expand-lg navbar-dark bg-hospital px-4 py-3">
-        <Link className="navbar-brand fw-bold fs-3" to="/">MedBridge</Link>
-        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse ms-auto" id="navbarNav">
-          <ul className="navbar-nav ms-auto">
-            <li className="nav-item"><Link className="nav-link" to="/about">About</Link></li>
-            <li className="nav-item"><Link className="nav-link" to="/features">Features</Link></li>
-            <li className="nav-item"><Link className="nav-link" to="/contact">Contact</Link></li>
-            <li className="nav-item"><Link className="btn btn-outline-light ms-2" to="/login">Login</Link></li>
-          </ul>
-        </div>
-      </nav>
+      <Navbar />
 
-      {/* Hero */}
-      <section className="hero-section text-white d-flex align-items-center justify-content-center">
+      {/* Hero Section */}
+      <section className="hero-section text-white d-flex align-items-center">
+  <div className="container">
+    <div className="row">
+      <div className="col-md-8">
         <div className="hero-container text-left">
           <h1 className="display-4 fw-bold">Next-Gen Medical Record System</h1>
           <p className="lead">Secure | Smart | Decentralized</p>
           <Link to="/features" className="btn btn-warning btn-lg mt-3">Explore Features</Link>
         </div>
-      </section>
+      </div>
+    </div>
+  </div>
+</section>
 
-      {/* Sections */}
+
+      {/* Why MedBridge */}
       <section className="section-blue text-white py-5">
         <div className="container text-center">
           <h2>Why MedBridge?</h2>
@@ -39,6 +33,7 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Key Services */}
       <section className="section-white py-5">
         <div className="container text-center">
           <h2>Key Services</h2>
@@ -50,6 +45,7 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Call to Action */}
       <section className="section-blue text-white py-5 text-center">
         <div className="container">
           <h2>Take Control of Your Health Records</h2>
@@ -57,10 +53,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="footer text-white text-center py-3">
-        &copy; 2025 MedBridge | Smart Health. Secure Life.
-      </footer>
+      <Footer />
     </>
   );
 };

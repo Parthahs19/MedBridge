@@ -1,0 +1,47 @@
+/* Pages.css */
+.page-wrapper {
+    padding: 60px 20px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .page-wrapper h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #1f4172;
+    margin-bottom: 20px;
+  }
+  
+  .page-wrapper h4 {
+    color: #004080;
+    margin-top: 30px;
+  }
+  
+  .page-wrapper p {
+    font-size: 1.1rem;
+    color: #333;
+    line-height: 1.8;
+  }
+  
+  .page-wrapper .lead {
+    font-size: 1.25rem;
+    color: #495057;
+  }
+  
+  .form-control, .form-label {
+    font-size: 1rem;
+  }
+  
+  button.btn-primary {
+    background-color: #1f4172;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+  }
+  
+  button.btn-primary:hover {
+    background-color: #16365d;
+  }
+  

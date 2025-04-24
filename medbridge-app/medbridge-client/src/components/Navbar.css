@@ -1,0 +1,49 @@
+/* Navbar.css */
+
+.nav-link-lg {
+    font-size: 1.15rem;
+    font-weight: 500;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .nav-link-btn {
+    font-size: 1.15rem;
+    font-weight: 500;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  
+  .nav-link-lg::after {
+    content: '';
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    bottom: -4px;
+    left: 0;
+    background-color: #ffc107; /* Bootstrap warning color */
+    transition: width 0.3s ease;
+  }
+  
+  .nav-link-lg:hover {
+    color: #ffc107 !important;
+    transform: translateY(-2px);
+  }
+  
+  .nav-link-lg:hover::after {
+    width: 100%;
+  }
+  
+  .brand-lg {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #ffffff;
+    transition: transform 0.3s ease;
+  }
+  
+  .brand-lg:hover {
+    transform: scale(1.05);
+    color: #ffc107;
+  }
+  
