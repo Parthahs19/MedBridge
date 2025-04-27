@@ -8,6 +8,8 @@ import Dashboard from './pages/Dashboard';
 import About from './pages/About';
 import Features from './pages/Features';
 import Contact from './pages/Contact';
+import AdminDashboard from './pages/AdminDashboard';
+import DoctorDashboard from './pages/DoctorDashboard';
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
           <Route path="/features" element={<Features />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/admin" element={<AdminDashboard/>}/>
+          <Route path="/doctor" element={<DoctorDashboard/>}/>
         </Routes>
     </Router>
   );

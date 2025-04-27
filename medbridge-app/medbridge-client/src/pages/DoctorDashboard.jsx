@@ -1,78 +1,62 @@
-// src/pages/DoctorDashboard.js
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import Sidebar from '../components/Sidebar';
-import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS } from 'chart.js';
-import './DoctorDashboard.css';
-
-ChartJS.register(
-  require('chart.js').CategoryScale,
-  require('chart.js').LinearScale,
-  require('chart.js').BarElement,
-  require('chart.js').Tooltip,
-  require('chart.js').Legend
-);
+import React, { useState } from 'react';
+import './DoctorDashboard.css'; // Custom CSS
+import AddModal from '../components/AddModel';
+import EditModal from '../components/EditModel';
+import Pagination from '../components/Pagination';
 
 const DoctorDashboard = () => {
-  const [patients, setPatients] = useState([]);
-  const [records, setRecords] = useState([]);
+  const [patients, setPatients] = useState([
+    { id: 1, name: 'John Doe', age: 30, condition: 'Flu' },
+    { id: 2, name: 'Jane Doe', age: 25, condition: 'Migraine' },
+  ]);
+  const [activePatient, setActivePatient] = useState(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  useEffect(() => {
-    // Fetch patients and records data
-    const fetchData = async () => {
-      try {
-        const patientRes = await axios.get('http://localhost:5000/api/users/patients');
-        const recordRes = await axios.get('http://localhost:5000/api/records');
-        setPatients(patientRes.data);
-        setRecords(recordRes.data);
-      } catch (error) {
-        console.error('Error fetching data', error);
-      }
-    };
+  const patientsPerPage = 5;
+  const totalPages = Math.ceil(patients.length / patientsPerPage);
 
-    fetchData();
-  }, []);
-
-  // Chart data for patients and records
-  const chartData = {
-    labels: ['Patients', 'Records'],
-    datasets: [
-      {
-        label: 'Total',
-        data: [patients.length, records.length],
-        backgroundColor: ['#003366', '#0099cc'],
-        borderColor: '#fff',
-        borderWidth: 1,
-      },
-    ],
+  const handleAddPatient = (newPatient) => {
+    setPatients([...patients, { ...newPatient, id: patients.length + 1 }]);
   };
+
+  const handleEditPatient = (updatedPatient) => {
+    const updatedPatients = patients.map((patient) =>
+      patient.id === updatedPatient.id ? updatedPatient : patient
+    );
+    setPatients(updatedPatients);
+  };
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const currentPatients = patients.slice((currentPage - 1) * patientsPerPage, currentPage * patientsPerPage);
 
   return (
     <div className="doctor-dashboard">
-      <Sidebar role="Doctor" />
-      <div className="dashboard-content">
-        <h2>Doctor Dashboard</h2>
-
-        <div className="stats">
-          <h3>Statistics</h3>
-          <Bar data={chartData} options={{ responsive: true, maintainAspectRatio: false }} />
-        </div>
-
-        <h3>Patients</h3>
-        <ul>
-          {patients.map((patient) => (
-            <li key={patient._id}>{patient.name}</li>
-          ))}
-        </ul>
-
-        <h3>Records</h3>
-        <ul>
-          {records.map((record) => (
-            <li key={record._id}>{record.title}</li>
-          ))}
-        </ul>
+      <h1 className="doctor-title">Doctor Dashboard</h1>
+      <div className="doctor-header">
+        <button onClick={() => setIsAddModalOpen(true)} className="doctor-add-btn">Add Patient</button>
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
       </div>
+
+      <div className="doctor-grid">
+        {currentPatients.map((patient) => (
+          <div key={patient.id} className="doctor-card">
+            <h3>{patient.name}</h3>
+            <p>Age: {patient.age}</p>
+            <p>Condition: {patient.condition}</p>
+            <div className="doctor-actions">
+              <button onClick={() => { setActivePatient(patient); setIsEditModalOpen(true); }} className="doctor-edit-btn">Edit</button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <AddModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onAdd={handleAddPatient} />
+      {activePatient && <EditModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} onSave={handleEditPatient} patient={activePatient} />}
     </div>
   );
 };
