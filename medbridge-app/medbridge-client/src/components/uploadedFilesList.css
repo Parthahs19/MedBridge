@@ -1,0 +1,25 @@
+.uploaded-files {
+    background: #f1f5f9;
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  .uploaded-files ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .uploaded-files li {
+    margin: 10px 0;
+  }
+  
+  .uploaded-files a {
+    color: #0ea5e9;
+    font-weight: bold;
+    text-decoration: underline;
+  }
+  
+  .uploaded-files a:hover {
+    color: #0284c7;
+  }
+  

@@ -1,0 +1,27 @@
+.ipfs-uploader {
+    background: #f8fafc;
+    padding: 20px;
+    border: 2px dashed #3b82f6;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .ipfs-uploader input[type="file"] {
+    margin-bottom: 10px;
+  }
+  
+  .ipfs-uploader button {
+    background-color: #3b82f6;
+    color: white;
+    padding: 8px 16px;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .ipfs-uploader button:hover {
+    background-color: #2563eb;
+  }
+  

@@ -8,8 +8,8 @@ import Dashboard from './pages/Dashboard';
 import About from './pages/About';
 import Features from './pages/Features';
 import Contact from './pages/Contact';
-import AdminDashboard from './pages/AdminDashboard';
-import DoctorDashboard from './pages/DoctorDashboard';
+import DoctorDashboard from './pages/doctor/DoctorDashboard';
+import AdminDashboard from './pages/admin/AdminDashboard';
 
 function App() {
   return (
