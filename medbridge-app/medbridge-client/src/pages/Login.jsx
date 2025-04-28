@@ -21,16 +21,16 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await loginUser(formData);
-      const { token, user } = res.data;
+      const { token, role } = res.data;
 
       // Store token and user info
       localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('user', JSON.stringify(role));
 
       // Redirect based on role
-      if (user.role === 'admin') {
+      if (role === 'admin') {
         navigate('/admin');
-      } else if (user.role === 'doctor') {
+      } else if (role === 'doctor') {
         navigate('/doctor');
       } else {
         navigate('/dashboard');
