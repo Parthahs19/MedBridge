@@ -1,0 +1,41 @@
+/* src/pages/Unauthorized.css */
+
+.unauthorized-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f6f9fc;
+  }
+  
+  .unauthorized-card {
+    background: white;
+    padding: 40px 60px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    animation: fadeIn 1s ease;
+  }
+  
+  .unauthorized-card h1 {
+    font-size: 2.5rem;
+    color: #e63946;
+    margin-bottom: 20px;
+  }
+  
+  .unauthorized-card p {
+    font-size: 1.2rem;
+    color: #333;
+    margin: 10px 0;
+  }
+  
+  .highlight {
+    color: #0077b6;
+    font-weight: bold;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  

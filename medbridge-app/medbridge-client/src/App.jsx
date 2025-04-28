@@ -12,6 +12,8 @@ import DoctorDashboard from './pages/doctor/DoctorDashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ProtectedRoute from './utils/ProtectedRoute';
+import Unauthorized from './pages/Unauthorized';
 
 function App() {
   return (
@@ -22,11 +24,33 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/features" element={<Features />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/admin" element={<AdminDashboard/>}/>
-          <Route path="/doctor" element={<DoctorDashboard/>}/>
+          <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['patient']}>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+              <Route
+          path="/doctor"
+          element={
+            <ProtectedRoute allowedRoles={['doctor']}>
+              <DoctorDashboard/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminDashboard/>
+            </ProtectedRoute>
+          }
+        />
           <Route path="/login" element = {<Login/>}/>
           <Route path="/register" element={<Register/>}/>
+          <Route path="/unauthorized" element={<Unauthorized />} />
         </Routes>
     </Router>
   );

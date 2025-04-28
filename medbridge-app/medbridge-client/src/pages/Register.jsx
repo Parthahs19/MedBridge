@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../services/authService';
 import './Auth.css'; // we'll create this for styling
+import Navbar from '../components/NavBar';
+import Footer from '../components/Footer';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -30,6 +32,8 @@ const Register = () => {
   };
 
   return (
+    <>
+        <Navbar/>
     <div className="auth-container">
       <div className="auth-form">
         <h2>Register</h2>
@@ -71,6 +75,8 @@ const Register = () => {
         </p>
       </div>
     </div>
+    <Footer />
+    </>
   );
 };
 
