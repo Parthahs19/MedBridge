@@ -1,70 +1,57 @@
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
-const User = require("../models/User");
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import Patient from '../models/Patient.js';
+import Doctor from '../models/Doctor.js';
+import Admin from '../models/Admin.js';
 
-const ACCESS_SECRET = process.env.ACCESS_SECRET;
-const REFRESH_SECRET = process.env.REFRESH_SECRET;
-
-exports.register = async (req, res) => {
-  const { name, email, password, role } = req.body;
+export const registerUser = async (req, res) => {
+  const { name, email, password, role, specialization } = req.body;
 
   try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser)
-      return res.status(400).json({ message: "User already exists" });
+    let existingUser;
+    if (role === 'patient') existingUser = await Patient.findOne({ email });
+    if (role === 'doctor') existingUser = await Doctor.findOne({ email });
+    if (role === 'admin') existingUser = await Admin.findOne({ email });
+
+    if (existingUser) return res.status(400).json({ message: 'User already exists' });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const refreshToken = jwt.sign({ email }, REFRESH_SECRET, { expiresIn: "7d" });
 
-    const newUser = await User.create({
-      name,
-      email,
-      password: hashedPassword,
-      role: role || "Patient",
-      refreshToken,
-    });
+    let newUser;
+    if (role === 'patient') newUser = new Patient({ name, email, password: hashedPassword });
+    if (role === 'doctor') newUser = new Doctor({ name, email, password: hashedPassword, specialization });
+    if (role === 'admin') newUser = new Admin({ name, email, password: hashedPassword });
 
-    const accessToken = jwt.sign({ id: newUser._id, role: newUser.role }, ACCESS_SECRET, { expiresIn: "15m" });
+    await newUser.save();
 
-    res.status(201).json({
-      message: "User registered successfully",
-      accessToken,
-      refreshToken,
-    });
+    res.status(201).json({ message: 'User registered successfully' });
+
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Registration failed" });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
-exports.login = async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
-
-  if (!user || !await bcrypt.compare(password, user.password))
-    return res.status(401).json({ message: "Invalid credentials" });
-
-  const accessToken = jwt.sign({ id: user._id, role: user.role }, ACCESS_SECRET, { expiresIn: "15m" });
-  const refreshToken = jwt.sign({ id: user._id }, REFRESH_SECRET, { expiresIn: "7d" });
-
-  user.refreshToken = refreshToken;
-  await user.save();
-
-  res.json({ accessToken, refreshToken });
-};
-
-exports.refreshToken = async (req, res) => {
-  const { token } = req.body;
-  if (!token) return res.sendStatus(401);
-
+export const loginUser = async (req, res) => {
+  const { email, password, role } = req.body;
+  console.log(role);
   try {
-    const decoded = jwt.verify(token, REFRESH_SECRET);
-    const user = await User.findById(decoded.id);
-    if (user?.refreshToken !== token) throw new Error();
+    let user;
+    if (role === 'patient') user = await Patient.findOne({ email });
+    if (role === 'doctor') user = await Doctor.findOne({ email });
+    if (role === 'admin') user = await Admin.findOne({ email });
 
-    const newAccessToken = jwt.sign({ id: user._id, role: user.role }, ACCESS_SECRET, { expiresIn: "15m" });
-    res.json({ accessToken: newAccessToken });
-  } catch {
-    res.sendStatus(403);
+    if (!user) return res.status(400).json({ message: 'Invalid credentials' });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+    res.status(200).json({ token, role: user.role, name: user.name });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
   }
 };

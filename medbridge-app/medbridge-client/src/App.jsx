@@ -10,6 +10,8 @@ import Features from './pages/Features';
 import Contact from './pages/Contact';
 import DoctorDashboard from './pages/doctor/DoctorDashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import Login from './pages/Login';
+import Register from './pages/Register';
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/admin" element={<AdminDashboard/>}/>
           <Route path="/doctor" element={<DoctorDashboard/>}/>
+          <Route path="/login" element = {<Login/>}/>
+          <Route path="/register" element={<Register/>}/>
         </Routes>
     </Router>
   );
