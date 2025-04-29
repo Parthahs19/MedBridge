@@ -1,26 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
-import { motion } from 'framer-motion';
-import { FaFileMedical, FaPrescriptionBottleAlt, FaCalendarAlt, FaChartLine, FaUserCircle, FaCog, FaSignOutAlt } from 'react-icons/fa';
+import { FaFileMedical, FaPrescriptionBottleAlt, FaCalendarAlt, FaChartLine, FaUserCircle, FaCog, FaSignOutAlt, FaUserMd, FaHeartbeat } from 'react-icons/fa';
 import Timeline from './Timeline';
 import PrescriptionList from './PrescriptionList';
 import AppointmentHistory from './AppointmentHistory';
+import axios from 'axios';
 
 const Dashboard = () => {
-  const [patient, setPatient] = useState({ name: "John Doe", age: 32, id: "P-2034" });
+  const userId = localStorage.getItem("userId");
+  const [patient, setPatient] = useState({ name: "John Doe", age: 32, id: "P-2034", doctor: "Dr. Sarah Lewis" });
+  const [patientData, setPatientData] = useState(null);
   const [activeSection, setActiveSection] = useState("summary");
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
   const handleLogout = () => {
-    // Logout logic here
-    console.log("Logging out...");
+    localStorage.clear();
+    window.location.href = "/login";
   };
+
+  useEffect(() => {
+    // Assuming you have a patientId and backend API ready
+    const fetchPatientData = async () => {
+      try {
+        const response = await axios.get(`/api/patient/${userId}`); // Replace with actual patientId
+        setPatientData(response.data);
+      } catch (error) {
+        console.error("Error fetching patient data:", error);
+      }
+    };
+
+    fetchPatientData();
+  }, []);
 
   return (
     <>
-      {/* Dashboard Custom Navbar */}
+      {/* Navbar */}
       <nav className="dashboard-navbar">
         <h1 className="logo">🏥 MedBridge</h1>
         <div className="profile-menu">
@@ -38,21 +54,13 @@ const Dashboard = () => {
       <div className="dashboard-container d-flex">
         {/* Sidebar */}
         <aside className="sidebar">
-  <ul>
-    <li className={activeSection === "summary" ? "active" : ""} onClick={() => setActiveSection("summary")}>
-      <FaChartLine /> <span>Dashboard</span>
-    </li>
-    <li className={activeSection === "timeline" ? "active" : ""} onClick={() => setActiveSection("timeline")}>
-      <FaFileMedical /> <span>Timeline</span>
-    </li>
-    <li className={activeSection === "prescriptions" ? "active" : ""} onClick={() => setActiveSection("prescriptions")}>
-      <FaPrescriptionBottleAlt /> <span>Prescriptions</span>
-    </li>
-    <li className={activeSection === "appointments" ? "active" : ""} onClick={() => setActiveSection("appointments")}>
-      <FaCalendarAlt /> <span>Appointments</span>
-    </li>
-  </ul>
-</aside>
+          <ul>
+            <li className={activeSection === "summary" ? "active" : ""} onClick={() => setActiveSection("summary")}> <FaChartLine /> <span>Dashboard</span> </li>
+            <li className={activeSection === "timeline" ? "active" : ""} onClick={() => setActiveSection("timeline")}> <FaFileMedical /> <span>Timeline</span> </li>
+            <li className={activeSection === "prescriptions" ? "active" : ""} onClick={() => setActiveSection("prescriptions")}> <FaPrescriptionBottleAlt /> <span>Prescriptions</span> </li>
+            <li className={activeSection === "appointments" ? "active" : ""} onClick={() => setActiveSection("appointments")}> <FaCalendarAlt /> <span>Appointments</span> </li>
+          </ul>
+        </aside>
 
         {/* Main Content */}
         <div className="main-dashboard-content">
@@ -62,57 +70,48 @@ const Dashboard = () => {
           </header>
 
           {activeSection === "summary" && (
-            <motion.section
-              className="dashboard-widgets row g-4"
-              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
-            >
-              {/* Primary Cards */}
-              <div className="col-md-5">
-                <div className="widget-card bg-gradient-info text-white p-4 rounded shadow">
-                  <FaFileMedical size={32} />
-                  <h5>Total Records</h5>
-                  <p className="fs-4 fw-semibold">14</p>
-                </div>
-              </div>
-              <div className="col-md-5">
-                <div className="widget-card bg-gradient-success text-white p-4 rounded shadow">
-                  <FaPrescriptionBottleAlt size={32} />
-                  <h5>Prescriptions</h5>
-                  <p className="fs-4 fw-semibold">28</p>
-                </div>
-              </div>
-              <div className="col-md-5">
-                <div className="widget-card bg-gradient-warning text-white p-4 rounded shadow">
-                  <FaCalendarAlt size={32} />
-                  <h5>Appointments</h5>
-                  <p className="fs-4 fw-semibold">7 Past</p>
-                </div>
-              </div>
+  <section className="dashboard-summary">
+    <div className="summary-grid">
+      <div className="summary-card bg-cyan">
+        <FaCalendarAlt size={30} />
+        <h5>Upcoming Appointment</h5>
+        <p>Apr 30, 10:00 AM</p>
+      </div>
 
-              {/* Extra Summary Section */}
-              <div className="extra-summary mt-5 p-4 rounded shadow bg-white">
-                <h4 className="mb-4">📈 Latest Vitals Overview</h4>
-                <div className="vitals-grid">
-                  <div className="vital-box">
-                    <h6>Heart Rate</h6>
-                    <p>78 bpm</p>
-                  </div>
-                  <div className="vital-box">
-                    <h6>Blood Pressure</h6>
-                    <p>120/80 mmHg</p>
-                  </div>
-                  <div className="vital-box">
-                    <h6>Temperature</h6>
-                    <p>98.6°F</p>
-                  </div>
-                  <div className="vital-box">
-                    <h6>Oxygen Level</h6>
-                    <p>98%</p>
-                  </div>
-                </div>
-              </div>
-            </motion.section>
-          )}
+      <div className="summary-card bg-green">
+        <FaPrescriptionBottleAlt size={30} />
+        <h5>Active Prescriptions</h5>
+        <p>3</p>
+      </div>
+
+      <div className="summary-card bg-yellow">
+        <FaHeartbeat size={30} />
+        <h5>Last Visit</h5>
+        <p>Apr 22, 2025</p>
+      </div>
+
+      <div className="summary-card bg-purple">
+        <FaUserMd size={30} />
+        <h5>Doctor Assigned</h5>
+        <p>{patient?.doctor}</p>
+      </div>
+    </div>
+
+    <div className="vitals-overview">
+  <h4>📈 Latest Vitals Overview</h4>
+  <div className="vitals-grid">
+    <div className="vital-box"><h6>Heart Rate</h6><p>{patientData?.vitals?.heartRate || 'N/A'}</p></div>
+    <div className="vital-box"><h6>Blood Pressure</h6><p>{patientData?.vitals?.bloodPressure || '120/80 mmHg'}</p></div>
+    <div className="vital-box"><h6>Temperature</h6><p>{patientData?.vitals?.temperature || '98.6°F'}</p></div>
+    <div className="vital-box"><h6>Oxygen Level</h6><p>{patientData?.vitals?.oxygenLevel || '98%'}</p></div>
+  </div>
+  <div className="health-tip">
+    💡 <strong>Health Tip:</strong> Don’t forget to take your blood pressure medicine by 9 AM!
+  </div>
+</div>
+
+  </section>
+)}
 
           {activeSection === "timeline" && (
             <section className="dashboard-section mt-4">

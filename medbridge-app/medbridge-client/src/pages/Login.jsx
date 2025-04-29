@@ -28,6 +28,7 @@ const Login = () => {
       // Store token and user info
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(role));
+      localStorage.setItem("userId", res.data.id);
 
       // Redirect based on role
       if (role === 'admin') {
