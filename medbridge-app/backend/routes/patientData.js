@@ -1,15 +1,20 @@
-const express = require('express');
-const PatientData = require('./models/PatientData');
+import express from 'express';
+import PatientData from '../models/PatientData.js';
+
 const router = express.Router();
 
 // Get patient data by patientId
 router.get('/patient/:id', async (req, res) => {
   try {
-    const patientData = await PatientData.findById(req.params.id); // Use the patientId here
+    const patientData = await PatientData.findOne({ patientId: req.params.id });
+    if (!patientData) {
+      return res.status(404).json({ message: 'Patient not found' });
+    }
     res.json(patientData);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-module.exports = router;
+export default router;
+

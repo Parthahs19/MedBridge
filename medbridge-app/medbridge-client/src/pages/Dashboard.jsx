@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import './Dashboard.css';
 import { FaFileMedical, FaPrescriptionBottleAlt, FaCalendarAlt, FaChartLine, FaUserCircle, FaCog, FaSignOutAlt, FaUserMd, FaHeartbeat } from 'react-icons/fa';
 import Timeline from './Timeline';
 import PrescriptionList from './PrescriptionList';
 import AppointmentHistory from './AppointmentHistory';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import axios from 'axios';
+import './Dashboard.css';
 
 const Dashboard = () => {
   const userId = localStorage.getItem("userId");
@@ -13,18 +14,19 @@ const Dashboard = () => {
   const [activeSection, setActiveSection] = useState("summary");
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
-
+  const toggleDropdown = () => setDropdownOpen(prevState => !prevState); // Updated toggle function
   const handleLogout = () => {
     localStorage.clear();
     window.location.href = "/login";
   };
 
+  const navigate = useNavigate(); // Initialize navigate
+
   useEffect(() => {
-    // Assuming you have a patientId and backend API ready
     const fetchPatientData = async () => {
       try {
-        const response = await axios.get(`/api/patient/${userId}`); // Replace with actual patientId
+        const response = await axios.get(`/api/patient/${userId}`);
+        console.log("Patient API Response:", response.data); // Log response for debugging
         setPatientData(response.data);
       } catch (error) {
         console.error("Error fetching patient data:", error);
@@ -32,19 +34,19 @@ const Dashboard = () => {
     };
 
     fetchPatientData();
-  }, []);
+  }, [userId]);
 
   return (
     <>
       {/* Navbar */}
       <nav className="dashboard-navbar">
         <h1 className="logo">🏥 MedBridge</h1>
-        <div className="profile-menu">
-          <FaUserCircle size={28} onClick={toggleDropdown} className="profile-icon" />
+        <div className="profile-menu" onClick={toggleDropdown}> {/* Add a click handler here */}
+          <FaUserCircle size={28} className="profile-icon" />
           {dropdownOpen && (
             <div className="dropdown-menu">
-              <p><FaUserCircle /> Profile</p>
-              <p><FaCog /> Settings</p>
+              <p onClick={() => navigate('/profile')}><FaUserCircle /> Profile</p>
+              <p onClick={() => navigate('/settings')}><FaCog /> Settings</p>
               <p onClick={handleLogout}><FaSignOutAlt /> Logout</p>
             </div>
           )}
@@ -70,48 +72,47 @@ const Dashboard = () => {
           </header>
 
           {activeSection === "summary" && (
-  <section className="dashboard-summary">
-    <div className="summary-grid">
-      <div className="summary-card bg-cyan">
-        <FaCalendarAlt size={30} />
-        <h5>Upcoming Appointment</h5>
-        <p>Apr 30, 10:00 AM</p>
-      </div>
+            <section className="dashboard-summary">
+              <div className="summary-grid">
+                <div className="summary-card bg-cyan">
+                  <FaCalendarAlt size={30} />
+                  <h5>Upcoming Appointment</h5>
+                  <p>Apr 30, 10:00 AM</p>
+                </div>
 
-      <div className="summary-card bg-green">
-        <FaPrescriptionBottleAlt size={30} />
-        <h5>Active Prescriptions</h5>
-        <p>3</p>
-      </div>
+                <div className="summary-card bg-green">
+                  <FaPrescriptionBottleAlt size={30} />
+                  <h5>Active Prescriptions</h5>
+                  <p>3</p>
+                </div>
 
-      <div className="summary-card bg-yellow">
-        <FaHeartbeat size={30} />
-        <h5>Last Visit</h5>
-        <p>Apr 22, 2025</p>
-      </div>
+                <div className="summary-card bg-yellow">
+                  <FaHeartbeat size={30} />
+                  <h5>Last Visit</h5>
+                  <p>Apr 22, 2025</p>
+                </div>
 
-      <div className="summary-card bg-purple">
-        <FaUserMd size={30} />
-        <h5>Doctor Assigned</h5>
-        <p>{patient?.doctor}</p>
-      </div>
-    </div>
+                <div className="summary-card bg-purple">
+                  <FaUserMd size={30} />
+                  <h5>Doctor Assigned</h5>
+                  <p>{patient?.doctor}</p>
+                </div>
+              </div>
 
-    <div className="vitals-overview">
-  <h4>📈 Latest Vitals Overview</h4>
-  <div className="vitals-grid">
-    <div className="vital-box"><h6>Heart Rate</h6><p>{patientData?.vitals?.heartRate || 'N/A'}</p></div>
-    <div className="vital-box"><h6>Blood Pressure</h6><p>{patientData?.vitals?.bloodPressure || '120/80 mmHg'}</p></div>
-    <div className="vital-box"><h6>Temperature</h6><p>{patientData?.vitals?.temperature || '98.6°F'}</p></div>
-    <div className="vital-box"><h6>Oxygen Level</h6><p>{patientData?.vitals?.oxygenLevel || '98%'}</p></div>
-  </div>
-  <div className="health-tip">
-    💡 <strong>Health Tip:</strong> Don’t forget to take your blood pressure medicine by 9 AM!
-  </div>
-</div>
-
-  </section>
-)}
+              <div className="vitals-overview">
+                <h4>📈 Latest Vitals Overview</h4>
+                <div className="vitals-grid">
+                  <div className="vital-box"><h6>Heart Rate</h6><p>{patientData?.vitals?.heartRate || 'N/A'}</p></div>
+                  <div className="vital-box"><h6>Blood Pressure</h6><p>{patientData?.vitals?.bloodPressure || '120/80 mmHg'}</p></div>
+                  <div className="vital-box"><h6>Temperature</h6><p>{patientData?.vitals?.temperature || '98.6°F'}</p></div>
+                  <div className="vital-box"><h6>Oxygen Level</h6><p>{patientData?.vitals?.oxygenLevel || '98%'}</p></div>
+                </div>
+                <div className="health-tip">
+                  💡 <strong>Health Tip:</strong> Don’t forget to take your blood pressure medicine by 9 AM!
+                </div>
+              </div>
+            </section>
+          )}
 
           {activeSection === "timeline" && (
             <section className="dashboard-section mt-4">
