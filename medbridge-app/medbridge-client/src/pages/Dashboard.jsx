@@ -1,9 +1,11 @@
+// Dashboard.jsx
 import React, { useState, useEffect } from 'react';
-import { FaFileMedical, FaPrescriptionBottleAlt, FaCalendarAlt, FaChartLine, FaUserCircle, FaCog, FaSignOutAlt, FaUserMd, FaHeartbeat } from 'react-icons/fa';
+import { FaFileMedical, FaPrescriptionBottleAlt, FaCalendarAlt, FaChartLine, FaUserCircle, FaCog, FaSignOutAlt, FaUserMd, FaHeartbeat, FaFolderOpen } from 'react-icons/fa';
 import Timeline from './Timeline';
 import PrescriptionList from './PrescriptionList';
 import AppointmentHistory from './AppointmentHistory';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import PatientReports from './PatientReports';  // ✅ Import PatientReports component
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Dashboard.css';
 
@@ -14,19 +16,19 @@ const Dashboard = () => {
   const [activeSection, setActiveSection] = useState("summary");
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const toggleDropdown = () => setDropdownOpen(prevState => !prevState); // Updated toggle function
+  const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
   const handleLogout = () => {
     localStorage.clear();
     window.location.href = "/login";
   };
 
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPatientData = async () => {
       try {
         const response = await axios.get(`/api/patient/${userId}`);
-        console.log("Patient API Response:", response.data); // Log response for debugging
+        console.log("Patient API Response:", response.data);
         setPatientData(response.data);
       } catch (error) {
         console.error("Error fetching patient data:", error);
@@ -41,7 +43,7 @@ const Dashboard = () => {
       {/* Navbar */}
       <nav className="dashboard-navbar">
         <h1 className="logo">🏥 MedBridge</h1>
-        <div className="profile-menu" onClick={toggleDropdown}> {/* Add a click handler here */}
+        <div className="profile-menu" onClick={toggleDropdown}>
           <FaUserCircle size={28} className="profile-icon" />
           {dropdownOpen && (
             <div className="dropdown-menu">
@@ -57,10 +59,21 @@ const Dashboard = () => {
         {/* Sidebar */}
         <aside className="sidebar">
           <ul>
-            <li className={activeSection === "summary" ? "active" : ""} onClick={() => setActiveSection("summary")}> <FaChartLine /> <span>Dashboard</span> </li>
-            <li className={activeSection === "timeline" ? "active" : ""} onClick={() => setActiveSection("timeline")}> <FaFileMedical /> <span>Timeline</span> </li>
-            <li className={activeSection === "prescriptions" ? "active" : ""} onClick={() => setActiveSection("prescriptions")}> <FaPrescriptionBottleAlt /> <span>Prescriptions</span> </li>
-            <li className={activeSection === "appointments" ? "active" : ""} onClick={() => setActiveSection("appointments")}> <FaCalendarAlt /> <span>Appointments</span> </li>
+            <li className={activeSection === "summary" ? "active" : ""} onClick={() => setActiveSection("summary")}>
+              <FaChartLine /> <span>Dashboard</span>
+            </li>
+            <li className={activeSection === "timeline" ? "active" : ""} onClick={() => setActiveSection("timeline")}>
+              <FaFileMedical /> <span>Timeline</span>
+            </li>
+            <li className={activeSection === "prescriptions" ? "active" : ""} onClick={() => setActiveSection("prescriptions")}>
+              <FaPrescriptionBottleAlt /> <span>Prescriptions</span>
+            </li>
+            <li className={activeSection === "appointments" ? "active" : ""} onClick={() => setActiveSection("appointments")}>
+              <FaCalendarAlt /> <span>Appointments</span>
+            </li>
+            <li className={activeSection === "reports" ? "active" : ""} onClick={() => setActiveSection("reports")}>
+              <FaFolderOpen /> <span>Patient Reports</span> {/* ✅ Sidebar item for Reports */}
+            </li>
           </ul>
         </aside>
 
@@ -132,6 +145,13 @@ const Dashboard = () => {
             <section className="dashboard-section mt-4">
               <h4>📅 Appointment History</h4>
               <AppointmentHistory />
+            </section>
+          )}
+
+          {activeSection === "reports" && (  // ✅ Render Patient Reports section
+            <section className="dashboard-section mt-4">
+              <h4>📂 Patient Reports</h4>
+              <PatientReports />
             </section>
           )}
         </div>

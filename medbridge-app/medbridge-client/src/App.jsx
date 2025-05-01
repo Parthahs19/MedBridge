@@ -14,6 +14,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ProtectedRoute from './utils/ProtectedRoute';
 import Unauthorized from './pages/Unauthorized';
+import PatientReports from './pages/PatientReports';
+import ViewReport from './components/ViewReport';
 
 function App() {
   return (
@@ -51,6 +53,7 @@ function App() {
           <Route path="/login" element = {<Login/>}/>
           <Route path="/register" element={<Register/>}/>
           <Route path="/unauthorized" element={<Unauthorized />} />
+          <Route path="/report-view/:ipfsHash" element={<ViewReport/>} />
         </Routes>
     </Router>
   );
