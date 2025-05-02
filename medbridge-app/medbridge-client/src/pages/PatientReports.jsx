@@ -40,10 +40,7 @@ const PatientReports = () => {
                   {new Date(report.date).toLocaleDateString()} &middot; {report.doctor}
                 </h6>
                 <p className="card-text text-secondary">{report.description}</p>
-                <Button
-                  variant="primary"
-                  href={`/report-view/${report.ipfsHash}`}
-                >
+                <Button variant="primary" href={`/report-view/${report.ipfsCid}`}>
                   View Report
                 </Button>
               </div>

@@ -1,10 +1,21 @@
 // Dashboard.jsx
-import React, { useState, useEffect } from 'react';
-import { FaFileMedical, FaPrescriptionBottleAlt, FaCalendarAlt, FaChartLine, FaUserCircle, FaCog, FaSignOutAlt, FaUserMd, FaHeartbeat, FaFolderOpen } from 'react-icons/fa';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  FaFileMedical,
+  FaPrescriptionBottleAlt,
+  FaCalendarAlt,
+  FaChartLine,
+  FaUserCircle,
+  FaCog,
+  FaSignOutAlt,
+  FaUserMd,
+  FaHeartbeat,
+  FaFolderOpen,
+} from 'react-icons/fa';
 import Timeline from './Timeline';
 import PrescriptionList from './PrescriptionList';
 import AppointmentHistory from './AppointmentHistory';
-import PatientReports from './PatientReports';  // ✅ Import PatientReports component
+import PatientReports from './PatientReports';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Dashboard.css';
@@ -15,14 +26,29 @@ const Dashboard = () => {
   const [patientData, setPatientData] = useState(null);
   const [activeSection, setActiveSection] = useState("summary");
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const navigate = useNavigate();
 
-  const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
+  const dropdownRef = useRef(null);
+
+  // Handle dropdown toggle and outside click close
+  const toggleDropdown = () => setDropdownOpen((prev) => !prev);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const handleLogout = () => {
     localStorage.clear();
     window.location.href = "/login";
   };
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPatientData = async () => {
@@ -34,7 +60,6 @@ const Dashboard = () => {
         console.error("Error fetching patient data:", error);
       }
     };
-
     fetchPatientData();
   }, [userId]);
 
@@ -43,13 +68,24 @@ const Dashboard = () => {
       {/* Navbar */}
       <nav className="dashboard-navbar">
         <h1 className="logo">🏥 MedBridge</h1>
-        <div className="profile-menu" onClick={toggleDropdown}>
-          <FaUserCircle size={28} className="profile-icon" />
+
+        <div className={`profile-menu ${dropdownOpen ? 'open' : ''}`}>
+          <FaUserCircle
+            size={28}
+            className="profile-icon"
+            onClick={toggleDropdown}
+          />
           {dropdownOpen && (
             <div className="dropdown-menu">
-              <p onClick={() => navigate('/profile')}><FaUserCircle /> Profile</p>
-              <p onClick={() => navigate('/settings')}><FaCog /> Settings</p>
-              <p onClick={handleLogout}><FaSignOutAlt /> Logout</p>
+              <p onClick={() => navigate('/profile')}>
+                <FaUserCircle /> Profile
+              </p>
+              <p onClick={() => navigate('/settings')}>
+                <FaCog /> Settings
+              </p>
+              <p onClick={handleLogout}>
+                <FaSignOutAlt /> Logout
+              </p>
             </div>
           )}
         </div>
@@ -72,7 +108,7 @@ const Dashboard = () => {
               <FaCalendarAlt /> <span>Appointments</span>
             </li>
             <li className={activeSection === "reports" ? "active" : ""} onClick={() => setActiveSection("reports")}>
-              <FaFolderOpen /> <span>Patient Reports</span> {/* ✅ Sidebar item for Reports */}
+              <FaFolderOpen /> <span>Patient Reports</span>
             </li>
           </ul>
         </aside>
@@ -148,7 +184,7 @@ const Dashboard = () => {
             </section>
           )}
 
-          {activeSection === "reports" && (  // ✅ Render Patient Reports section
+          {activeSection === "reports" && (
             <section className="dashboard-section mt-4">
               <h4>📂 Patient Reports</h4>
               <PatientReports />

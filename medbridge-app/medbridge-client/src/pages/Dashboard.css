@@ -22,45 +22,62 @@
   letter-spacing: 1px;
 }
 
+/* Profile Menu + Dropdown */
 .profile-menu {
   position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
 .profile-icon {
-  cursor: pointer;
-  transition: transform 0.3s;
+  color: #fff;
+  transition: transform 0.2s ease, color 0.2s ease;
 }
 
 .profile-icon:hover {
-  transform: scale(1.1);
+  transform: scale(1.15);
+  color: #ffd700;
 }
 
 .dropdown-menu {
   position: absolute;
-  top: 40px;
+  top: 45px;
   right: 0;
   background: #ffffff;
-  border-radius: 8px;
+  border-radius: 10px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  padding: 10px;
-  color: #333;
   min-width: 180px;
-  z-index: 999;
+  z-index: 1000;
+  padding: 8px 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+}
+
+/* Show dropdown when parent has .open class (via JS toggle) */
+.profile-menu.open .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 
 .dropdown-menu p {
-  margin: 10px 0;
-  padding: 10px 14px;
-  font-weight: 500;
   display: flex;
   align-items: center;
   gap: 10px;
+  padding: 10px 16px;
+  margin: 0;
   cursor: pointer;
-  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #333;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .dropdown-menu p:hover {
-  background-color: #f7f9fc;
+  background-color: #f0f4ff;
+  color: #1f4172;
 }
 
 /* Sidebar */
@@ -69,7 +86,6 @@
   background: linear-gradient(180deg, #1f4172 0%, #2c5282 100%);
   color: #fff;
   padding: 30px 20px;
-  height: 180vh;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -127,7 +143,7 @@
   opacity: 0.9;
 }
 
-/* --- SIMPLIFIED SUMMARY CARDS --- */
+/* Summary Cards */
 .dashboard-summary {
   margin-top: 40px;
 }
@@ -163,7 +179,7 @@
   margin-top: 6px;
 }
 
-/* Color Themes for Summary Cards */
+/* Color Themes */
 .bg-cyan {
   background: linear-gradient(135deg, #06b6d4, #0e7490);
 }
@@ -180,7 +196,7 @@
   background: linear-gradient(135deg, #a855f7, #7e22ce);
 }
 
-/* --- VITALS OVERVIEW --- */
+/* Vitals Overview */
 .vitals-overview {
   background: #fff;
   border-radius: 12px;
@@ -231,7 +247,7 @@
   color: #333;
 }
 
-/* Generic Section Box */
+/* Generic Section */
 .dashboard-section {
   background: #fff;
   padding: 30px;

@@ -9,6 +9,7 @@ const reportSchema = new mongoose.Schema({
     doctor: { type: String, required: true },
     reportType: { type: String, enum: ['Lab Report', 'Radiology', 'Cardiology', 'Pathology', 'Other'], default: 'Other' },
     ipfsCid: { type: String, required: true },   // <<== Store only CID
+    fileType: { type: String, required: true }, 
     remarks: { type: String }
   }, { timestamps: true });
   

@@ -4,7 +4,7 @@ import Report from '../models/Report.js';
 const router = express.Router();
 
 // GET all reports
-router.get('/api/reports', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const reports = await Report.find().sort({ date: -1 }); // Latest first
     res.json(reports);

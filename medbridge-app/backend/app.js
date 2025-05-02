@@ -25,7 +25,7 @@ app.use('/api', patientData);
 app.use('/api/records', recordRoutes);
 app.use('/api/prescriptions', prescriptionRoutes);
 app.use('/api/appointments', appointmentRoutes);
-app.use('/api/reports',reportRoutes);
+app.use('/api/reports', reportRoutes);
 
 // Server
 const PORT = process.env.PORT || 5000;

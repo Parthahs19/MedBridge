@@ -4,10 +4,9 @@ import { useParams, Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 
 const ReportView = () => {
-  const { ipfsHash } = useParams();
+  const { cid } = useParams();  // Use cid from route param
 
-  // Example IPFS gateway (replace with your gateway if needed)
-  const fileUrl = `https://ipfs.io/ipfs/${ipfsHash}`;
+  const fileUrl = `https://ipfs.io/ipfs/${cid}`;
 
   return (
     <div className="container my-4">
@@ -17,6 +16,8 @@ const ReportView = () => {
           Back to Dashboard
         </Button>
       </div>
+      <p><strong>IPFS CID:</strong> {cid}</p> {/* Optional but informative */}
+
       <div className="border rounded p-3 shadow-sm bg-light">
         <iframe
           src={fileUrl}
@@ -24,8 +25,10 @@ const ReportView = () => {
           width="100%"
           height="600px"
           className="mb-3"
-        ></iframe>
-        <Button variant="primary" href={fileUrl} target="_blank">
+        >
+          <p>Your browser does not support embedded documents. <a href={fileUrl} target="_blank" rel="noopener noreferrer">Click here to view the report.</a></p>
+        </iframe>
+        <Button variant="primary" href={fileUrl} target="_blank" rel="noopener noreferrer">
           Download Report
         </Button>
       </div>

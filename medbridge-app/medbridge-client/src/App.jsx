@@ -53,7 +53,7 @@ function App() {
           <Route path="/login" element = {<Login/>}/>
           <Route path="/register" element={<Register/>}/>
           <Route path="/unauthorized" element={<Unauthorized />} />
-          <Route path="/report-view/:ipfsHash" element={<ViewReport/>} />
+          <Route path="/report-view/:cid" element={<ViewReport/>} />
         </Routes>
     </Router>
   );
