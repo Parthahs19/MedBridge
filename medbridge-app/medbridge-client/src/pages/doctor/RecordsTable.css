@@ -1,0 +1,57 @@
+/* src/pages/DoctorDashboard/RecordsTable.css */
+
+.records-table-container {
+  margin-top: 20px;
+  overflow-x: auto;
+}
+
+.records-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.records-table th,
+.records-table td {
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.records-table thead {
+  background-color: #007bff;
+  color: #ffffff;
+}
+
+.records-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.records-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.edit-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.edit-btn:hover {
+  background-color: #218838;
+}
+
+.no-records-text {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-style: italic;
+}

@@ -1,14 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/common/Navbar';
 import Sidebar from '../../components/common/Sidebar';
 import SummaryCards from '../../components/common/SummaryCards';
+import RecordsTable from './RecordsTable';
+import AddEditRecordPopup from './AddEditRecordPopup';
+import { fetchRecords, createRecord, updateRecord } from '../../utils/Record';
 import './DoctorDashboard.css';
 import { FaUserMd, FaFileMedical, FaNotesMedical } from 'react-icons/fa';
-import AddEditRecordPopup from './AddEditRecordPopup';
 
 const DoctorDashboard = () => {
   const [activeSection, setActiveSection] = useState('summary');
-  const [showPopup, setShowPopup] = useState(false);
+  const [records, setRecords] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [editData, setEditData] = useState(null);
 
   const menuItems = [
     { key: 'summary', label: 'Summary', icon: <FaUserMd /> },
@@ -17,10 +21,46 @@ const DoctorDashboard = () => {
   ];
 
   const summaryCards = [
-    { title: 'Patients Treated', value: '120', icon: <FaUserMd size={40} />, bg: 'bg-info' },
-    { title: 'Records Updated', value: '85', icon: <FaFileMedical size={40} />, bg: 'bg-success' },
+    { title: 'Patients Treated', value: records.length, icon: <FaUserMd size={40} />, bg: 'bg-info' },
+    { title: 'Records Updated', value: records.length, icon: <FaFileMedical size={40} />, bg: 'bg-success' },
     { title: 'Pending Reviews', value: '10', icon: <FaNotesMedical size={40} />, bg: 'bg-warning' },
   ];
+
+  const loadRecords = async () => {
+    const data = await fetchRecords();
+    setRecords(data);
+  };
+
+  useEffect(() => {
+    loadRecords();
+  }, []);
+
+  const handleAddClick = () => {
+    setEditData(null);
+    setShowForm(true);
+  };
+
+  const handleEditClick = (record) => {
+    setEditData(record);
+    setShowForm(true);
+  };
+
+  const handleAddEditSubmit = async (formData) => {
+    if (editData && editData.recordId) {
+      // Use recordId instead of _id
+      await updateRecord(editData.recordId, formData);
+    } else {
+      await createRecord(formData);
+    }
+    setShowForm(false);
+    setEditData(null);
+    loadRecords();
+  };
+
+  const handleCloseForm = () => {
+    setShowForm(false);
+    setEditData(null);
+  };
 
   return (
     <div className="doctor-dashboard">
@@ -32,7 +72,7 @@ const DoctorDashboard = () => {
           {activeSection === 'summary' && (
             <>
               <h3>Welcome, Doctor 👨‍⚕️</h3>
-              <p>Manage your patients and update medical records easily from your dashboard.</p>
+              <p>Monitor and manage your patient records efficiently.</p>
               <SummaryCards cards={summaryCards} />
             </>
           )}
@@ -40,25 +80,28 @@ const DoctorDashboard = () => {
           {activeSection === 'records' && (
             <>
               <h3>Patient Records</h3>
-              <div className="records-list">
-                {/* Example static list */}
-                <div className="record-item">John Doe - Diabetes Management</div>
-                <div className="record-item">Jane Smith - Cardiology Checkup</div>
-                <div className="record-item">Mike Johnson - Orthopedic Treatment</div>
-              </div>
+              <RecordsTable records={records} onEdit={handleEditClick} />
             </>
           )}
 
           {activeSection === 'addEdit' && (
             <>
               <h3>Add or Edit Record</h3>
-              <button className="popup-button" onClick={() => setShowPopup(true)}>Add/Edit Record</button>
+              <button className="popup-button" onClick={handleAddClick}>
+                Add New Record
+              </button>
             </>
           )}
         </div>
       </div>
 
-      {showPopup && <AddEditRecordPopup onClose={() => setShowPopup(false)} />}
+      {showForm && (
+        <AddEditRecordPopup
+          initialData={editData}
+          onSubmit={handleAddEditSubmit}
+          onClose={handleCloseForm}
+        />
+      )}
     </div>
   );
 };
