@@ -3,6 +3,10 @@ import Calendar from 'react-calendar';
 import { Loader2 } from 'lucide-react';
 import 'react-calendar/dist/Calendar.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useNavigate } from 'react-router-dom';
+
+
+
 
 const AppointmentHistory = () => {
   const [appointments, setAppointments] = useState([]);
@@ -10,6 +14,7 @@ const AppointmentHistory = () => {
   const [selectedAppt, setSelectedAppt] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch('http://localhost:5000/api/appointments')
@@ -85,6 +90,7 @@ const AppointmentHistory = () => {
   }
 
   return (
+    <>
     <div style={{ padding: '40px 0' }}>
       <h2 className="text-center mb-4" style={{ fontSize: '2rem', fontWeight: '700', color: '#212529' }}>
         Appointment History
@@ -129,6 +135,12 @@ const AppointmentHistory = () => {
         </div>
       )}
     </div>
+    <div className="text-center mt-3">
+    <button className="btn btn-success" onClick={() => navigate('/book-appointment')}>
+      Book New Appointment
+    </button>
+  </div>
+</>  
   );
 };
 

@@ -1,0 +1,113 @@
+/* Inline navbar styles */
+.inline-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #2c5282, #1f4172);
+    color: white;
+    padding: 12px 30px;
+    border-bottom: 2px solid #1a365d;
+  }
+  
+  .inline-navbar .logo {
+    font-size: 1.7rem;
+    font-weight: bold;
+  }
+  
+  .inline-navbar .nav-buttons button {
+    background: white;
+    color: #1f4172;
+    border: none;
+    padding: 8px 18px;
+    margin-left: 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  .inline-navbar .nav-buttons button:hover {
+    background: #e2e8f0;
+  }
+  
+  .inline-navbar .nav-buttons .logout {
+    background: #e53e3e;
+    color: white;
+  }
+  
+  .inline-navbar .nav-buttons .logout:hover {
+    background: #c53030;
+  }
+  
+  /* Profile form styles */
+  .profile-container {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 40px 50px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  }
+  
+  .profile-container h2 {
+    font-size: 2.2rem;
+    color: #1f4172;
+    margin-bottom: 5px;
+  }
+  
+  .profile-container p {
+    color: #4a5568;
+    margin-bottom: 25px;
+  }
+  
+  .profile-form {
+    display: grid;
+    gap: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #1f4172;
+  }
+  
+  .profile-form input,
+  .profile-form textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2px solid #cbd5e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border 0.3s ease;
+  }
+  
+  .profile-form input:focus,
+  .profile-form textarea:focus {
+    border-color: #2c5282;
+    outline: none;
+  }
+  
+  .submit-btn {
+    background: linear-gradient(135deg, #2c5282, #1f4172);
+    color: #fff;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 25px;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+  }
+  
+  .submit-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+  }
+  
+  .form-message {
+    margin-top: 15px;
+    font-weight: 500;
+    color: #15803d;
+  }
+  

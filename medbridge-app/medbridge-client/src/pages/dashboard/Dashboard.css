@@ -261,3 +261,40 @@
   color: #1f4172;
   margin-bottom: 20px;
 }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.nav-button {
+  background: linear-gradient(135deg, #2c5282, #1f4172);
+  border: none;
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.nav-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.25);
+  opacity: 0.9;
+}
+
+.nav-button.logout {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.nav-button.logout:hover {
+  opacity: 0.9;
+  transform: translateY(-2px) scale(1.03);
+}
+
