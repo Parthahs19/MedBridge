@@ -1,72 +1,63 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-contract MedBridge {
-    
-    address public owner;
-
-    enum Role { None, Admin, Doctor, Patient }
-
-    struct MedicalRecord {
-        string ipfsHash;
-        address uploadedBy;
-        uint256 timestamp;
+contract MedBridgeReport {
+    struct ReportMetadata {
+        string reportId;
+        string ipfsCid;
+        address patientWallet;
+        address sharedWith;
+        bool isShared;
     }
 
-    mapping(address => Role) public roles;
-    mapping(address => MedicalRecord[]) private patientRecords;
+    mapping(string => ReportMetadata) public reports; // reportId → metadata
 
-    event RecordAdded(address indexed patient, string ipfsHash, address indexed doctor);
-    event RoleAssigned(address indexed user, Role role);
+    event ReportUploaded(string reportId, string ipfsCid, address patientWallet);
+    event AccessGranted(string reportId, address sharedWith);
+    event AccessRevoked(string reportId);
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only contract owner can perform this action");
-        _;
+    // Upload metadata CID
+    function uploadReport(string memory _reportId, string memory _ipfsCid) public {
+        require(bytes(reports[_reportId].reportId).length == 0, "Report already exists");
+
+        reports[_reportId] = ReportMetadata({
+            reportId: _reportId,
+            ipfsCid: _ipfsCid,
+            patientWallet: msg.sender,
+            sharedWith: address(0),
+            isShared: false
+        });
+
+        emit ReportUploaded(_reportId, _ipfsCid, msg.sender);
     }
 
-    modifier onlyAdmin() {
-        require(roles[msg.sender] == Role.Admin, "Only admin can perform this action");
-        _;
+    // Grant access to another hospital
+    function grantAccess(string memory _reportId, address _sharedWith) public {
+        require(reports[_reportId].patientWallet == msg.sender, "Only owner can grant access");
+
+        reports[_reportId].sharedWith = _sharedWith;
+        reports[_reportId].isShared = true;
+
+        emit AccessGranted(_reportId, _sharedWith);
     }
 
-    modifier onlyDoctorOrAdmin() {
+    // Revoke access
+    function revokeAccess(string memory _reportId) public {
+        require(reports[_reportId].patientWallet == msg.sender, "Only owner can revoke access");
+
+        reports[_reportId].sharedWith = address(0);
+        reports[_reportId].isShared = false;
+
+        emit AccessRevoked(_reportId);
+    }
+
+    // View metadata (only patient or sharedWith)
+    function viewReport(string memory _reportId) public view returns (string memory, string memory, address, bool) {
+        ReportMetadata memory report = reports[_reportId];
         require(
-            roles[msg.sender] == Role.Admin || roles[msg.sender] == Role.Doctor,
-            "Only admin or doctor can add records"
+            msg.sender == report.patientWallet || msg.sender == report.sharedWith,
+            "Not authorized"
         );
-        _;
-    }
-
-    constructor() {
-        owner = msg.sender;
-        roles[msg.sender] = Role.Admin; // Contract creator is the first Admin
-    }
-
-    // Admin assigns roles
-    function assignRole(address user, Role role) external onlyAdmin {
-        require(role != Role.None, "Invalid role");
-        roles[user] = role;
-        emit RoleAssigned(user, role);
-    }
-
-    // Doctor/Admin adds a record for patient
-    function addRecord(address patient, string memory ipfsHash) public onlyDoctorOrAdmin {
-        require(roles[patient] == Role.Patient, "Can only add records for patients");
-        patientRecords[patient].push(MedicalRecord(ipfsHash, msg.sender, block.timestamp));
-        emit RecordAdded(patient, ipfsHash, msg.sender);
-    }
-
-    // View records (patient sees their own, Admin/Doctor can access any)
-    function getRecords(address patient) public view returns (MedicalRecord[] memory) {
-        require(
-            msg.sender == patient || roles[msg.sender] == Role.Admin || roles[msg.sender] == Role.Doctor,
-            "Not authorized to view records"
-        );
-        return patientRecords[patient];
-    }
-
-    // Optional: View own role
-    function myRole() public view returns (Role) {
-        return roles[msg.sender];
+        return (report.reportId, report.ipfsCid, report.sharedWith, report.isShared);
     }
 }

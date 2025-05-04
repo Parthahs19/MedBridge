@@ -4,7 +4,18 @@ import React from 'react';
 import './RecordsTable.css';
 import { FaEdit } from 'react-icons/fa';
 
-const RecordsTable = ({ records, onEdit }) => {
+const RecordsTable = ({ records, onEdit, patients = [], doctors = [] }) => {
+  // Helper functions to get names from ID
+  const getPatientName = (id) => {
+    const patient = patients.find(p => p._id === id);
+    return patient ? patient.name : 'Unknown';
+  };
+
+  const getDoctorName = (id) => {
+    const doctor = doctors.find(d => d._id === id);
+    return doctor ? doctor.name : 'Unknown';
+  };
+
   return (
     <div className="records-table-container">
       {records.length === 0 ? (
@@ -24,10 +35,10 @@ const RecordsTable = ({ records, onEdit }) => {
           <tbody>
             {records.map((record) => (
               <tr key={record._id}>
-                <td>{record.patientName}</td>
+                <td>{getPatientName(record.patientId)}</td>
                 <td>{record.diagnosis}</td>
                 <td>{record.treatment}</td>
-                <td>{record.doctorName}</td>
+                <td>{getDoctorName(record.doctorId)}</td>
                 <td>{new Date(record.date).toLocaleDateString()}</td>
                 <td>
                   <button className="edit-btn" onClick={() => onEdit(record)}>
@@ -44,3 +55,4 @@ const RecordsTable = ({ records, onEdit }) => {
 };
 
 export default RecordsTable;
+
