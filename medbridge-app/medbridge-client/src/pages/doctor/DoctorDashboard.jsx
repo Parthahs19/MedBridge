@@ -10,10 +10,13 @@ import AppointmentsTable from './AppointmentsTable';
 import AddEditAppointmentPopup from './AddEditAppointmentPopup';
 import UploadReport from './UploadReport';
 import ViewReports from './ViewReports';
+import Wallet from './Wallet';
 import { fetchRecords, createRecord, updateRecord } from '../../utils/Record';
 import { fetchAppointments, createAppointment, updateAppointment } from '../../utils/Appointment';
 import './DoctorDashboard.css';
-import { FaUserMd, FaFileMedical, FaNotesMedical, FaCalendarCheck } from 'react-icons/fa';
+import { FaUserMd, FaFileMedical, FaNotesMedical, FaCalendarCheck,FaExchangeAlt,FaWallet  } from 'react-icons/fa';
+import RaiseRequest from './RaiseRequest';
+import axios from 'axios';
 
 const DoctorDashboard = () => {
   const [activeSection, setActiveSection] = useState('summary');
@@ -28,6 +31,7 @@ const DoctorDashboard = () => {
 
   const [doctorsList, setDoctorsList] = useState([]);
   const [patientsList, setPatientsList] = useState([]);
+  const [myReports, setMyReports] = useState([]);
 
   const menuItems = [
     { key: 'summary', label: 'Summary', icon: <FaUserMd /> },
@@ -36,6 +40,8 @@ const DoctorDashboard = () => {
     { key: 'appointments', label: 'Appointments', icon: <FaCalendarCheck /> },
     { key: 'uploadReport', label: 'Upload Report', icon: <FaFileMedical /> },
     { key: 'viewReports', label: 'View Reports', icon: <FaNotesMedical /> },
+    { key: 'raiseRequest', label: 'Raise Transfer Request', icon: <FaExchangeAlt /> },
+    { key: 'myWallet', label: 'My Wallet', icon: <FaWallet /> },  
   ];
 
   const summaryCards = [
@@ -74,6 +80,11 @@ const DoctorDashboard = () => {
     loadRecords();
     loadAppointments();
     loadDoctorsPatients();
+    const fetchReports = async () => {
+      const res = await axios.get('/api/reports');
+      setMyReports(res.data);
+    };
+    fetchReports();
   }, []);
 
   const handleAddEditSubmit = async (formData) => {
@@ -116,7 +127,7 @@ const DoctorDashboard = () => {
     const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
     return sorted[0] ? sorted[0][0] : 'N/A';
   };
-
+  console.log(myReports);
   return (
     <div className="doctor-dashboard">
       <Navbar title="Doctor Dashboard" />
@@ -157,7 +168,7 @@ const DoctorDashboard = () => {
               </div>
             </>
           )}
-
+         
           {activeSection === 'records' && (
             <>
               <h3>Patient Records</h3>
@@ -242,6 +253,21 @@ const DoctorDashboard = () => {
               <ViewReports patientsList={patientsList} />
             </>
           )}
+
+{activeSection === 'raiseRequest' && (
+  <>
+    <h3>Raise Transfer Request</h3>
+    <RaiseRequest reportList={myReports} />
+  </>
+)}
+
+{activeSection === 'myWallet' && (
+  <>
+    <h3>My Blockchain Wallet</h3>
+    <Wallet />
+  </>
+)}
+
         </div>
       </div>
 

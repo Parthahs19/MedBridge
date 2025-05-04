@@ -1,6 +1,7 @@
 // routes/doctors.js
 import express from 'express';
 import  Doctor from '../models/Doctor.js';
+import { getDoctorWallet } from '../controllers/doctorController.js';
 
 const router = express.Router();
 
@@ -29,5 +30,7 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: 'Failed to create doctor' });
   }
 });
+
+router.get('/:id/wallet', getDoctorWallet);
 
 export default router;

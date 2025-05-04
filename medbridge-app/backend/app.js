@@ -12,6 +12,8 @@ import patientRoutes from './routes/patientRoutes.js';
 import doctorRoutes from './routes/doctor.js';
 import lookupRoutes from './routes/lookupRoutes.js'
 import fileUpload from 'express-fileupload';
+import walletRoutes from './routes/walletRoutes.js';
+import transferRequestRoutes from './routes/transferRequestRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -34,6 +36,8 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/profile', patientRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api/lookup', lookupRoutes);
+app.use('/api/wallet', walletRoutes);
+app.use('/api/transferRequest',transferRequestRoutes);
 
 // Server
 const PORT = process.env.PORT || 5000;

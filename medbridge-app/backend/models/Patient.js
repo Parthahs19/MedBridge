@@ -10,6 +10,8 @@ const patientSchema = new mongoose.Schema({
   gender: { type: String, enum: ['Male', 'Female', 'Other'] },
   password: { type: String, required: true },
   role: { type: String, default: 'patient' },
+  walletAddress: { type: String },
+  privateKey: { type: String } 
 }, { timestamps: true });
 
 export default mongoose.model('Patient', patientSchema);
