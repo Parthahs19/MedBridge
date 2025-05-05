@@ -18,9 +18,33 @@ export const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     let newUser;
-    if (role === 'patient') newUser = new Patient({ name, email, password: hashedPassword });
-    if (role === 'doctor') newUser = new Doctor({ name, email, password: hashedPassword, specialization });
-    if (role === 'admin') newUser = new Admin({ name, email, password: hashedPassword });
+    if (role === 'patient') {
+      const lastPatient = await Patient.findOne().sort({ createdAt: -1 }).exec();
+      let nextNumber = 1001;
+      if (lastPatient && lastPatient.patientId) {
+        const lastNumber = parseInt(lastPatient.patientId.split('-')[1]);
+        nextNumber = lastNumber + 1;
+      }
+      const patientId = `P-${nextNumber}`;
+
+      newUser = new Patient({ name, email, password: hashedPassword, patientId });
+    }
+
+    if (role === 'doctor') {
+      const lastDoctor = await Doctor.findOne().sort({ createdAt: -1 }).exec();
+      let nextNumber = 101;
+      if (lastDoctor && lastDoctor.doctorId) {
+        const lastNumber = parseInt(lastDoctor.doctorId.split('-')[1]);
+        nextNumber = lastNumber + 1;
+      }
+      const doctorId = `D-${nextNumber}`;
+
+      newUser = new Doctor({ name, email, password: hashedPassword, specialization, doctorId });
+    }
+
+    if (role === 'admin') {
+      newUser = new Admin({ name, email, password: hashedPassword });
+    }
 
     await newUser.save();
 
@@ -31,6 +55,7 @@ export const registerUser = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
 
 export const loginUser = async (req, res) => {
   const { email, password, role } = req.body;

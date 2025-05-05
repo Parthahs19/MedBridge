@@ -1,24 +1,25 @@
-// routes/transferRequestRoutes.js
+// routes/transferRoutes.js
 import express from 'express';
 import {
-  createTransferRequest,
-  getPatientTransferRequests,
-  getDoctorRaisedRequests,
-  approveTransferRequest
+  raiseTransferRequest,
+  receiveRequest,
+  approveRequest,
+  receiveApprovedData,
+  getAllRequests,
+  requestPatientApproval,
+  patientRespondApproval
 } from '../controllers/transferRequestController.js';
 
 const router = express.Router();
 
-// Doctor raises request
-router.post('/raise', createTransferRequest);
+router.post('/raise', raiseTransferRequest);
+router.post('/receiveRequest', receiveRequest);
+router.post('/receiveApprovedData', receiveApprovedData);
 
-// Patient views all transfer requests for them
-router.get('/patient/:patientId', getPatientTransferRequests);
+router.put('/:requestId/approve', approveRequest);
+router.put('/:requestId/requestPatientApproval', requestPatientApproval);
+router.put('/:requestId/patientRespondApproval', patientRespondApproval);
 
-// Doctor views requests they raised
-router.get('/doctor/:doctorWallet', getDoctorRaisedRequests);
-
-// Patient approves request
-router.post('/approve', approveTransferRequest);
+router.get('/', getAllRequests);
 
 export default router;

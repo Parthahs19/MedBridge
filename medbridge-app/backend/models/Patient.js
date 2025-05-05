@@ -11,7 +11,8 @@ const patientSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { type: String, default: 'patient' },
   walletAddress: { type: String },
-  privateKey: { type: String } 
+  privateKey: { type: String },
+  patientId: { type: String, unique: true },
 }, { timestamps: true });
 
 export default mongoose.model('Patient', patientSchema);

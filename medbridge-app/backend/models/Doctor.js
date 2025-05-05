@@ -7,7 +7,8 @@ const doctorSchema = new mongoose.Schema({
   specialization: { type: String },
   role: { type: String, default: 'doctor' },
   walletAddress: { type: String },
-  privateKey: { type: String } 
-});
+  privateKey: { type: String },
+  doctorId: { type: String, unique: true },
+}, { timestamps: true });
 
 export default mongoose.model('Doctor', doctorSchema);

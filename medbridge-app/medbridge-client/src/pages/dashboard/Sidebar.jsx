@@ -1,5 +1,6 @@
 import React from 'react';
-import { FaChartLine, FaFileMedical, FaPrescriptionBottleAlt, FaCalendarAlt, FaFolderOpen } from 'react-icons/fa';
+import { FaChartLine, FaFileMedical, FaPrescriptionBottleAlt, FaCalendarAlt, FaFolderOpen, FaExchangeAlt } from 'react-icons/fa';
+
 
 const Sidebar = ({ activeSection, setActiveSection }) => {
   const menuItems = [
@@ -8,7 +9,9 @@ const Sidebar = ({ activeSection, setActiveSection }) => {
     { key: 'prescriptions', label: 'Prescriptions', icon: <FaPrescriptionBottleAlt /> },
     { key: 'appointments', label: 'Appointments', icon: <FaCalendarAlt /> },
     { key: 'reports', label: 'Patient Reports', icon: <FaFolderOpen /> },
+    { key: 'approveRequests', label: 'Approve Requests', icon: <FaExchangeAlt /> }, // ✅ New item
   ];
+  
 
   return (
     <aside className="sidebar">

@@ -14,9 +14,9 @@ import Wallet from './Wallet';
 import { fetchRecords, createRecord, updateRecord } from '../../utils/Record';
 import { fetchAppointments, createAppointment, updateAppointment } from '../../utils/Appointment';
 import './DoctorDashboard.css';
-import { FaUserMd, FaFileMedical, FaNotesMedical, FaCalendarCheck,FaExchangeAlt,FaWallet  } from 'react-icons/fa';
-import RaiseRequest from './RaiseRequest';
+import { FaUserMd, FaFileMedical, FaNotesMedical, FaCalendarCheck, FaExchangeAlt, FaWallet, FaListAlt } from 'react-icons/fa';
 import axios from 'axios';
+import ViewReceivedRequests from './ViewReceivedRequests';
 
 const DoctorDashboard = () => {
   const [activeSection, setActiveSection] = useState('summary');
@@ -33,6 +33,8 @@ const DoctorDashboard = () => {
   const [patientsList, setPatientsList] = useState([]);
   const [myReports, setMyReports] = useState([]);
 
+  const [doctorWallet, setDoctorWallet] = useState(''); // <-- FIX ADDED HERE
+
   const menuItems = [
     { key: 'summary', label: 'Summary', icon: <FaUserMd /> },
     { key: 'records', label: 'Patient Records', icon: <FaFileMedical /> },
@@ -40,8 +42,8 @@ const DoctorDashboard = () => {
     { key: 'appointments', label: 'Appointments', icon: <FaCalendarCheck /> },
     { key: 'uploadReport', label: 'Upload Report', icon: <FaFileMedical /> },
     { key: 'viewReports', label: 'View Reports', icon: <FaNotesMedical /> },
-    { key: 'raiseRequest', label: 'Raise Transfer Request', icon: <FaExchangeAlt /> },
-    { key: 'myWallet', label: 'My Wallet', icon: <FaWallet /> },  
+    { key: 'receivedRequests', label: 'Received Requests', icon: <FaExchangeAlt /> },
+    { key: 'myWallet', label: 'My Wallet', icon: <FaWallet /> },
   ];
 
   const summaryCards = [
@@ -80,11 +82,30 @@ const DoctorDashboard = () => {
     loadRecords();
     loadAppointments();
     loadDoctorsPatients();
+
     const fetchReports = async () => {
-      const res = await axios.get('/api/reports');
-      setMyReports(res.data);
+      try {
+        const res = await axios.get('/api/reports');
+        setMyReports(res.data);
+      } catch (err) {
+        console.error('Error fetching reports:', err);
+      }
     };
     fetchReports();
+
+    const fetchDoctorWallet = async () => {
+      try {
+        // You can replace this API call with your own backend route.
+        const res = await axios.get('/api/wallet/doctor');
+        setDoctorWallet(res.data.walletAddress);
+      } catch (err) {
+        console.error('Error fetching doctor wallet:', err);
+        // Fallback dummy wallet (optional)
+        setDoctorWallet('0xDUMMY_WALLET_ADDRESS');
+      }
+    };
+    fetchDoctorWallet();
+
   }, []);
 
   const handleAddEditSubmit = async (formData) => {
@@ -127,7 +148,7 @@ const DoctorDashboard = () => {
     const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
     return sorted[0] ? sorted[0][0] : 'N/A';
   };
-  console.log(myReports);
+
   return (
     <div className="doctor-dashboard">
       <Navbar title="Doctor Dashboard" />
@@ -168,7 +189,7 @@ const DoctorDashboard = () => {
               </div>
             </>
           )}
-         
+
           {activeSection === 'records' && (
             <>
               <h3>Patient Records</h3>
@@ -254,19 +275,15 @@ const DoctorDashboard = () => {
             </>
           )}
 
-{activeSection === 'raiseRequest' && (
-  <>
-    <h3>Raise Transfer Request</h3>
-    <RaiseRequest reportList={myReports} />
-  </>
-)}
+{activeSection === 'receivedRequests' && <ViewReceivedRequests />}
 
-{activeSection === 'myWallet' && (
-  <>
-    <h3>My Blockchain Wallet</h3>
-    <Wallet />
-  </>
-)}
+
+          {activeSection === 'myWallet' && (
+            <>
+              <h3>My Blockchain Wallet</h3>
+              <Wallet />
+            </>
+          )}
 
         </div>
       </div>
