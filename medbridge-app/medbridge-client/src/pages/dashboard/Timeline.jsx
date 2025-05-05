@@ -20,6 +20,7 @@ const Timeline = () => {
 
   if (loading) {
     return (
+
       <div style={{ display: 'flex', justifyContent: 'center', padding: '60px 0' }}>
         <Loader2 className="animate-spin" style={{ width: '40px', height: '40px', color: '#0d6efd' }} />
       </div>
@@ -99,7 +100,10 @@ const Timeline = () => {
   };
 
   return (
+    
     <div style={containerStyle}>
+      <h1>Timeline </h1>
+      <br></br>
       <ul className="list-unstyled" style={timelineStyle}>
         {records.map((record, index) => {
           const accentColor = borderAccentColors[index % borderAccentColors.length];

@@ -37,7 +37,8 @@ const PatientReports = () => {
               <div className="card-body">
                 <h5 className="card-title text-primary">{report.title}</h5>
                 <h6 className="card-subtitle mb-2 text-muted">
-                  {new Date(report.date).toLocaleDateString()} &middot; {report.doctor}
+                  {/* {new Date(report.date).toLocaleDateString()} &middot;  */}
+                  {report.doctor}
                 </h6>
                 <p className="card-text text-secondary">{report.description}</p>
                 <Button variant="primary" href={`/report-view/${report.ipfsCid}`}>

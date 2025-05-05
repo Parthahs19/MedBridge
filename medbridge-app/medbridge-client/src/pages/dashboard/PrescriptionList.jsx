@@ -76,6 +76,8 @@ const PrescriptionList = () => {
 
   return (
     <div style={containerStyle}>
+      <h1>Prescription</h1>
+      <br />
       {prescriptions.map((item, idx) => (
         <div
           key={idx}

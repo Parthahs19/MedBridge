@@ -8,10 +8,10 @@ import { uploadReportMetadata, grantReportAccess, revokeReportAccess, viewReport
  */
 export const uploadReport = async (req, res) => {
   try {
-    const { patientId, title, description, reportDate, doctor, reportType, remarks, patientWallet } = req.body;
-    const file = req.files.file; // file sent via multipart/form-data
+    const { patientId, title, description, reportDate, doctor, reportType, remarks } = req.body;
+    const file = req.file; // because multer.single('file') — it's req.file, not req.files.file
 
-    if (!patientId || !title || !reportDate || !doctor || !patientWallet || !file) {
+    if (!patientId || !title || !reportDate || !doctor || !file) {
       return res.status(400).json({ message: 'Required fields or file missing' });
     }
 
@@ -37,16 +37,12 @@ export const uploadReport = async (req, res) => {
 
     await newReport.save();
 
-    // Upload metadata to Blockchain (reportId + ipfsCid + patientWallet)
-    await uploadReportMetadata(reportId, cid, patientWallet);
-
     res.status(201).json({ message: 'Report uploaded successfully', report: newReport });
   } catch (err) {
     console.error('Upload Report Error:', err);
     res.status(500).json({ error: 'Failed to upload report', details: err.message });
   }
 };
-
 /**
  * View all Reports (from MongoDB)
  */

@@ -28,9 +28,6 @@ const ReportView = () => {
         >
           <p>Your browser does not support embedded documents. <a href={fileUrl} target="_blank" rel="noopener noreferrer">Click here to view the report.</a></p>
         </iframe>
-        <Button variant="primary" href={fileUrl} target="_blank" rel="noopener noreferrer">
-          Download Report
-        </Button>
       </div>
     </div>
   );

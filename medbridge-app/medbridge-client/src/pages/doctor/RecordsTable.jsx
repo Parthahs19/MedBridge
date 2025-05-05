@@ -7,12 +7,12 @@ import { FaEdit } from 'react-icons/fa';
 const RecordsTable = ({ records, onEdit, patients = [], doctors = [] }) => {
   // Helper functions to get names from ID
   const getPatientName = (id) => {
-    const patient = patients.find(p => p._id === id);
+    const patient = patients.find(p => p.patientId === id);
     return patient ? patient.name : 'Unknown';
   };
 
   const getDoctorName = (id) => {
-    const doctor = doctors.find(d => d._id === id);
+    const doctor = doctors.find(d => d.doctorId === id);
     return doctor ? doctor.name : 'Unknown';
   };
 

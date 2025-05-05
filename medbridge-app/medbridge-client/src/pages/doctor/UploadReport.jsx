@@ -16,20 +16,57 @@ const UploadReport = ({ patientsList }) => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    setFormData({ ...formData, [name]: files ? files[0] : value });
+    if (name === 'file') {
+      setFormData({ ...formData, file: files[0] });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate required fields
+    if (!formData.patientId || !formData.title || !formData.reportDate || !formData.doctor || !formData.file) {
+      alert('Please fill all required fields and upload a file.');
+      return;
+    }
+
     const data = new FormData();
-    Object.keys(formData).forEach(key => {
-      data.append(key, formData[key]);
-    });
+    data.append('patientId', formData.patientId);
+    data.append('title', formData.title);
+    data.append('description', formData.description);
+    data.append('reportDate', formData.reportDate);
+    data.append('doctor', formData.doctor);
+    data.append('reportType', formData.reportType);
+    data.append('remarks', formData.remarks);
+    data.append('file', formData.file);
+
+    // Debug: log FormData entries
+    for (let pair of data.entries()) {
+      console.log(pair[0] + ':', pair[1]);
+    }
 
     try {
-      await axios.post('/api/reports/upload', data);
+      await axios.post('/api/reports/upload', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
       alert('Report uploaded successfully!');
-      setFormData({ patientId: '', title: '', description: '', reportDate: '', doctor: '', reportType: 'Other', remarks: '', file: null });
+      // Reset form
+      setFormData({
+        patientId: '',
+        title: '',
+        description: '',
+        reportDate: '',
+        doctor: '',
+        reportType: 'Other',
+        remarks: '',
+        file: null
+      });
+      // Reset file input manually
+      document.getElementById('fileInput').value = '';
     } catch (err) {
       console.error(err);
       alert('Failed to upload report');
@@ -43,7 +80,9 @@ const UploadReport = ({ patientsList }) => {
         <label>Patient</label>
         <select name="patientId" value={formData.patientId} onChange={handleChange} required>
           <option value="">Select Patient</option>
-          {patientsList.map(p => <option key={p._id} value={p._id}>{p.name}</option>)}
+          {patientsList.map(p => (
+            <option key={p._id} value={p._id}>{p.name}</option>
+          ))}
         </select>
 
         <label>Title</label>
@@ -71,7 +110,7 @@ const UploadReport = ({ patientsList }) => {
         <input type="text" name="remarks" value={formData.remarks} onChange={handleChange} />
 
         <label>Upload File</label>
-        <input type="file" name="file" accept="*" onChange={handleChange} required />
+        <input id="fileInput" type="file" name="file" accept="*" onChange={handleChange} required />
 
         <button type="submit">Upload Report</button>
       </form>

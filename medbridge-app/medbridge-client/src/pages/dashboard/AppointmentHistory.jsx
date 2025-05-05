@@ -122,7 +122,7 @@ const AppointmentHistory = () => {
               <div className="modal-body">
                 {selectedAppt.map((appt, idx) => (
                   <div key={idx} className="mb-3 p-3 border rounded bg-light">
-                    <p><strong>Doctor:</strong> {appt.doctor}</p>
+                    <p><strong>Doctor:</strong> {appt.doctorName}</p>
                     <p><strong>Notes:</strong> {appt.notes}</p>
                   </div>
                 ))}
