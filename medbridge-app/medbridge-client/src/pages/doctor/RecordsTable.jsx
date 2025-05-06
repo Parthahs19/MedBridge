@@ -5,15 +5,18 @@ import './RecordsTable.css';
 import { FaEdit } from 'react-icons/fa';
 
 const RecordsTable = ({ records, onEdit, patients = [], doctors = [] }) => {
+  // Hardcoded fallback doctor ID for all records
+  const fallbackDoctorName = 'DOCTOR-001';
+
   // Helper functions to get names from ID
-  const getPatientName = (id) => {
+  const getPatientName = (id, index) => {
     const patient = patients.find(p => p.patientId === id);
-    return patient ? patient.name : 'Unknown';
+    return patient ? patient.name : `PATIENT-${(index + 1).toString().padStart(3, '0')}`;
   };
 
   const getDoctorName = (id) => {
     const doctor = doctors.find(d => d.doctorId === id);
-    return doctor ? doctor.name : 'Unknown';
+    return doctor ? doctor.name : fallbackDoctorName;
   };
 
   return (
@@ -33,9 +36,9 @@ const RecordsTable = ({ records, onEdit, patients = [], doctors = [] }) => {
             </tr>
           </thead>
           <tbody>
-            {records.map((record) => (
+            {records.map((record, index) => (
               <tr key={record._id}>
-                <td>{getPatientName(record.patientId)}</td>
+                <td>{getPatientName(record.patientId, index)}</td>
                 <td>{record.diagnosis}</td>
                 <td>{record.treatment}</td>
                 <td>{getDoctorName(record.doctorId)}</td>
@@ -55,4 +58,3 @@ const RecordsTable = ({ records, onEdit, patients = [], doctors = [] }) => {
 };
 
 export default RecordsTable;
-

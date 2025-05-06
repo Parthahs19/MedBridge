@@ -1,37 +1,44 @@
 // src/components/patient/PendingApprovals.js
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-
-// ⚠️ Replace with your actual patientId from auth context or JWT
-const mockPatientId = 'PATIENT123';
 
 const PendingApprovals = () => {
   const [approvals, setApprovals] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchPendingApprovals = async () => {
-    try {
-      const res = await axios.get(`/api/transferRequest/patient/${mockPatientId}/pendingApprovals`);
-      setApprovals(res.data);
-    } catch (err) {
-      console.error('Error fetching approvals:', err);
-    } finally {
-      setLoading(false);
+  // Hardcoded data
+  const hardcodedApprovals = [
+    {
+      _id: 'REQ-001',
+      patientId: 'P-2034',
+      reportId: 'REP-1001',
+      hospitalFrom: 'MedBridge',
+      hospitalTo: 'H210',
+      status: 'Pending',
+      patientApproval: 'Pending',
+      createdAt: '2025-05-05T00:00:00Z',
+      approved: false
     }
+  ];
+
+  const fetchPendingApprovals = () => {
+    setApprovals(hardcodedApprovals);
+    setLoading(false);
   };
 
-  const respondToApproval = async (requestId, action) => {
+  const respondToApproval = (requestId, action) => {
     const confirm = window.confirm(`Are you sure you want to ${action.toLowerCase()} this request?`);
     if (!confirm) return;
 
-    try {
-      await axios.put(`/api/transferRequest/${requestId}/patientApproval`, { action });
-      alert(`Request ${action.toLowerCase()}ed successfully!`);
-      fetchPendingApprovals();
-    } catch (err) {
-      console.error('Error updating approval status:', err);
-      alert('Failed to update approval status.');
-    }
+    alert(`Request ${action.toLowerCase()}ed successfully!`);
+
+    // Update local state → change status + patientApproval + approved flag
+    setApprovals(prev =>
+      prev.map(req =>
+        req._id === requestId
+          ? { ...req, approved: true, status: 'Approved', patientApproval: 'Approved' }
+          : req
+      )
+    );
   };
 
   useEffect(() => {
@@ -68,7 +75,7 @@ const PendingApprovals = () => {
   };
 
   const approveBtn = { ...buttonStyle, backgroundColor: '#28a745' };
-  const rejectBtn = { ...buttonStyle, backgroundColor: '#dc3545' };
+  const approvedBtn = { ...buttonStyle, backgroundColor: '#6c757d', cursor: 'default' };
 
   const cardStyle = {
     backgroundColor: '#ffffff',
@@ -77,6 +84,13 @@ const PendingApprovals = () => {
     padding: '24px',
     boxShadow: '0 2px 6px rgba(0,0,0,0.05)'
   };
+
+  // 👇 helper to style Approved text green
+  const getStatusCellStyle = (value) => ({
+    ...thTdStyles,
+    color: value === 'Approved' ? '#28a745' : '#333',
+    fontWeight: value === 'Approved' ? '600' : 'normal'
+  });
 
   if (loading) {
     return <p style={{ padding: '20px', fontSize: '16px' }}>Loading pending approvals...</p>;
@@ -93,11 +107,12 @@ const PendingApprovals = () => {
           <table style={tableStyles}>
             <thead>
               <tr>
+                <th style={headerCellStyle}>Patient ID</th>
                 <th style={headerCellStyle}>Report ID</th>
                 <th style={headerCellStyle}>From Hospital</th>
                 <th style={headerCellStyle}>To Hospital</th>
-                <th style={headerCellStyle}>Requested By Doctor</th>
                 <th style={headerCellStyle}>Status</th>
+                <th style={headerCellStyle}>Patient Approval</th>
                 <th style={headerCellStyle}>Date Requested</th>
                 <th style={headerCellStyle}>Actions</th>
               </tr>
@@ -105,26 +120,30 @@ const PendingApprovals = () => {
             <tbody>
               {approvals.map((req) => (
                 <tr key={req._id}>
+                  <td style={thTdStyles}>{req.patientId}</td>
                   <td style={thTdStyles}>{req.reportId}</td>
                   <td style={thTdStyles}>{req.hospitalFrom}</td>
                   <td style={thTdStyles}>{req.hospitalTo}</td>
-                  <td style={thTdStyles}>{req.doctorId}</td>
-                  <td style={thTdStyles}>{req.status}</td>
+
+                  {/* Status + Patient Approval with color */}
+                  <td style={getStatusCellStyle(req.status)}>{req.status}</td>
+                  <td style={getStatusCellStyle(req.patientApproval)}>{req.patientApproval}</td>
+
                   <td style={thTdStyles}>{new Date(req.createdAt).toLocaleDateString()}</td>
                   <td style={thTdStyles}>
                     <div style={{ display: 'flex', gap: '6px' }}>
-                      <button
-                        style={approveBtn}
-                        onClick={() => respondToApproval(req._id, 'Approve')}
-                      >
-                        Approve
-                      </button>
-                      <button
-                        style={rejectBtn}
-                        onClick={() => respondToApproval(req._id, 'Reject')}
-                      >
-                        Reject
-                      </button>
+                      {!req.approved ? (
+                        <button
+                          style={approveBtn}
+                          onClick={() => respondToApproval(req._id, 'Approve')}
+                        >
+                          Approve
+                        </button>
+                      ) : (
+                        <button style={approvedBtn} disabled>
+                          Approved
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
