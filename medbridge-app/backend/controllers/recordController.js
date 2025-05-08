@@ -1,9 +1,27 @@
+// controllers/recordController.js
 import { Record } from '../models/Record.js';
 
-// GET all records
+// GET all records (Admin only or Doctor view — optional)
 export const getAllRecords = async (req, res) => {
   try {
     const records = await Record.find().sort({ date: -1 });
+    res.json(records);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch records', error: err.message });
+  }
+};
+
+// ✅ GET records by patientId (Patient-specific)
+export const getRecordsByPatientId = async (req, res) => {
+  const { patientId } = req.params;
+
+  try {
+    const records = await Record.find({ patientId }).sort({ date: -1 });
+
+    if (!records || records.length === 0) {
+      return res.status(404).json({ message: 'No records found for this patient' });
+    }
+
     res.json(records);
   } catch (err) {
     res.status(500).json({ message: 'Failed to fetch records', error: err.message });

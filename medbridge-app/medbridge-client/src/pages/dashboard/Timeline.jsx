@@ -1,3 +1,4 @@
+// Timeline.js
 import React, { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 
@@ -6,21 +7,42 @@ const Timeline = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/records')
-      .then(res => res.json())
-      .then(data => {
+    const fetchPatientRecords = async () => {
+      const token = localStorage.getItem('token');
+      const patientId = localStorage.getItem('patientId');
+
+      if (!token || !patientId) {
+        console.error('Missing token or patientId in localStorage');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:5000/api/records/patient/${patientId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch patient records');
+        }
+
+        const data = await response.json();
         setRecords(data);
+      } catch (error) {
+        console.error('Error fetching patient records:', error);
+      } finally {
         setLoading(false);
-      })
-      .catch(err => {
-        console.error('Error fetching records:', err);
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchPatientRecords();
   }, []);
 
   if (loading) {
     return (
-
       <div style={{ display: 'flex', justifyContent: 'center', padding: '60px 0' }}>
         <Loader2 className="animate-spin" style={{ width: '40px', height: '40px', color: '#0d6efd' }} />
       </div>
@@ -100,32 +122,38 @@ const Timeline = () => {
   };
 
   return (
-    
     <div style={containerStyle}>
-      <h1>Timeline </h1>
-      <br></br>
-      <ul className="list-unstyled" style={timelineStyle}>
-        {records.map((record, index) => {
-          const accentColor = borderAccentColors[index % borderAccentColors.length];
-          return (
-            <li key={index} style={{ position: 'relative', marginBottom: '60px' }}>
-              <span style={circleStyle}></span>
-              <div
-                style={{
-                  ...cardStyle,
-                  borderLeft: `6px solid ${accentColor}`
-                }}
-                onMouseEnter={e => Object.assign(e.currentTarget.style, { ...cardHoverStyle, borderLeft: `6px solid ${accentColor}` })}
-                onMouseLeave={e => Object.assign(e.currentTarget.style, { ...cardStyle, borderLeft: `6px solid ${accentColor}` })}
-              >
-                <time style={timeStyle}>{new Date(record.date).toLocaleDateString()}</time>
-                <h3 style={cardTitleStyle}>{record.title}</h3>
-                <p style={descStyle}>{record.description}</p>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+      <h1 style={titleStyle}>Medical History Timeline</h1>
+      {records.length === 0 ? (
+        <p style={{ textAlign: 'center', color: '#6c757d' }}>No medical records found.</p>
+      ) : (
+        <ul className="list-unstyled" style={timelineStyle}>
+          {records.map((record, index) => {
+            const accentColor = borderAccentColors[index % borderAccentColors.length];
+            return (
+              <li key={record._id} style={{ position: 'relative', marginBottom: '60px' }}>
+                <span style={circleStyle}></span>
+                <div
+                  style={{
+                    ...cardStyle,
+                    borderLeft: `6px solid ${accentColor}`
+                  }}
+                  onMouseEnter={e =>
+                    Object.assign(e.currentTarget.style, { ...cardHoverStyle, borderLeft: `6px solid ${accentColor}` })
+                  }
+                  onMouseLeave={e =>
+                    Object.assign(e.currentTarget.style, { ...cardStyle, borderLeft: `6px solid ${accentColor}` })
+                  }
+                >
+                  <time style={timeStyle}>{new Date(record.date).toLocaleDateString()}</time>
+                  <h3 style={cardTitleStyle}>{record.title}</h3>
+                  <p style={descStyle}>{record.description}</p>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 };

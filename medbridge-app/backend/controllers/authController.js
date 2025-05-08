@@ -66,12 +66,38 @@ export const loginUser = async (req, res) => {
     if (role === 'admin') user = await Admin.findOne({ email });
 
     if (!user) return res.status(400).json({ message: 'Invalid credentials' });
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    const payload = {
+      id: user._id,
+      role: user.role
+    };
 
-    res.status(200).json({ token, role: user.role, name: user.name, id: user._id });
+    // Include custom patientId (only for patients)
+    if (role === 'patient') {
+      payload.patientId = user.patientId;
+    }
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+    // Prepare response object with role-specific ID key
+    let responseData = {
+      token,
+      role: user.role,
+      name: user.name
+    };
+
+    if (role === 'patient') {
+      responseData.patientId = user.patientId;
+    } else if (role === 'doctor') {
+      responseData.doctorId = user._id;
+    } else if (role === 'admin') {
+      responseData.adminId = user._id;
+    }
+
+    res.status(200).json(responseData);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });

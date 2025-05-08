@@ -11,6 +11,7 @@ export const protect = (roles = []) => {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = decoded;
+      
 
       if (roles.length > 0 && !roles.includes(decoded.role)) {
         return res.status(403).json({ message: 'Access forbidden: insufficient role' });

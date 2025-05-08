@@ -1,19 +1,33 @@
+// routes/recordRoutes.js
 import express from 'express';
 import {
   getAllRecords,
   getRecordById,
+  getRecordsByPatientId,
   createRecord,
   updateRecord,
-  deleteRecord,
+  deleteRecord
 } from '../controllers/recordController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// Routes
-router.get('/', getAllRecords);          // Get all records
-router.get('/:id', getRecordById);       // Get single record by ID
-router.post('/', createRecord);          // Create new record
-router.put('/:id', updateRecord);        // Update record by ID
-router.delete('/:id', deleteRecord);     // Delete record by ID
+// All records (optional: doctor/admin view)
+router.get('/', protect, getAllRecords);
+
+// Patient's own records (secure endpoint)
+router.get('/patient/:patientId', protect, getRecordsByPatientId);
+
+// Single record by ID
+router.get('/:id', protect, getRecordById);
+
+// Create record
+router.post('/', protect, createRecord);
+
+// Update record
+router.put('/:id', protect, updateRecord);
+
+// Delete record
+router.delete('/:id', protect, deleteRecord);
 
 export default router;
