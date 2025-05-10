@@ -1,3 +1,4 @@
+// PrescriptionList.js
 import React, { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 
@@ -6,16 +7,38 @@ const PrescriptionList = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/prescriptions')
-      .then(res => res.json())
-      .then(data => {
+    const fetchPrescriptions = async () => {
+      const token = localStorage.getItem('token');
+      const patientId = localStorage.getItem('patientId');
+
+      if (!token || !patientId) {
+        console.error('Missing token or patientId in localStorage');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:5000/api/prescriptions/patient/${patientId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch prescriptions');
+        }
+
+        const data = await response.json();
         setPrescriptions(data);
+      } catch (error) {
+        console.error('Error fetching prescriptions:', error);
+      } finally {
         setLoading(false);
-      })
-      .catch(err => {
-        console.error('Error fetching prescriptions:', err);
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchPrescriptions();
   }, []);
 
   if (loading) {
@@ -76,22 +99,26 @@ const PrescriptionList = () => {
 
   return (
     <div style={containerStyle}>
-      <h1>Prescription</h1>
-      <br />
-      {prescriptions.map((item, idx) => (
-        <div
-          key={idx}
-          style={cardStyle}
-          onMouseEnter={e => Object.assign(e.currentTarget.style, cardHoverStyle)}
-          onMouseLeave={e => Object.assign(e.currentTarget.style, cardStyle)}
-        >
-          <div style={dateStyle}>{new Date(item.date).toLocaleDateString()}</div>
-          <div style={doctorStyle}>{item.doctor}</div>
-          <div style={summaryStyle}>{item.summary}</div>
-        </div>
-      ))}
+      <h1 style={headingStyle}>My Prescriptions</h1>
+      {prescriptions.length === 0 ? (
+        <p style={{ textAlign: 'center', color: '#6c757d' }}>No prescriptions found.</p>
+      ) : (
+        prescriptions.map((item) => (
+          <div
+            key={item._id}
+            style={cardStyle}
+            onMouseEnter={e => Object.assign(e.currentTarget.style, cardHoverStyle)}
+            onMouseLeave={e => Object.assign(e.currentTarget.style, cardStyle)}
+          >
+            <div style={dateStyle}>{new Date(item.date).toLocaleDateString()}</div>
+            <div style={doctorStyle}>{item.doctor}</div>
+            <div style={summaryStyle}>{item.summary}</div>
+          </div>
+        ))
+      )}
     </div>
   );
 };
 
 export default PrescriptionList;
+

@@ -9,19 +9,15 @@ import { uploadReportMetadata, grantReportAccess, revokeReportAccess, viewReport
 export const uploadReport = async (req, res) => {
   try {
     const { patientId, title, description, reportDate, doctor, reportType, remarks } = req.body;
-    const file = req.file; // because multer.single('file') — it's req.file, not req.files.file
+    const file = req.file;
 
     if (!patientId || !title || !reportDate || !doctor || !file) {
       return res.status(400).json({ message: 'Required fields or file missing' });
     }
 
-    // Upload file to IPFS
     const { cid, fileType } = await uploadToIPFS(file);
-
-    // Generate unique reportId
     const reportId = `REP-${Date.now()}`;
 
-    // Save report in DB
     const newReport = new Report({
       reportId,
       patientId,
@@ -43,12 +39,22 @@ export const uploadReport = async (req, res) => {
     res.status(500).json({ error: 'Failed to upload report', details: err.message });
   }
 };
+
 /**
- * View all Reports (from MongoDB)
+ * View Reports (optionally filter by patientId)
+ * GET /api/reports?patient=patientId
  */
 export const getAllReports = async (req, res) => {
   try {
-    const reports = await Report.find().sort({ reportDate: -1 });
+    const { patient } = req.query;
+
+    const query = {};
+    if (patient) {
+      query.patientId = patient;
+    }
+
+    const reports = await Report.find(query).sort({ reportDate: -1 });
+
     res.status(200).json(reports);
   } catch (err) {
     console.error('Fetch Reports Error:', err);
@@ -60,7 +66,7 @@ export const getAllReports = async (req, res) => {
  * View Blockchain Metadata of a report (by reportId)
  */
 export const getBlockchainMetadata = async (req, res) => {
-  const { reportId, requesterWallet } = req.query; // send as query param
+  const { reportId, requesterWallet } = req.query;
 
   if (!reportId || !requesterWallet) {
     return res.status(400).json({ message: 'reportId and requesterWallet are required' });
@@ -92,7 +98,6 @@ export const grantAccess = async (req, res) => {
   }
 
   try {
-    // Grant access to the recipient
     const result = await grantReportAccess(reportId, recipientWallet, patientWallet);
     
     if (result.success) {
@@ -117,7 +122,6 @@ export const revokeAccess = async (req, res) => {
   }
 
   try {
-    // Revoke access for the patient
     const result = await revokeReportAccess(reportId, patientWallet);
 
     if (result.success) {
@@ -135,7 +139,7 @@ export const revokeAccess = async (req, res) => {
  * View Report Metadata (from Blockchain)
  */
 export const viewReport = async (req, res) => {
-  const { reportId, requesterWallet } = req.query; // Query params
+  const { reportId, requesterWallet } = req.query;
 
   if (!reportId || !requesterWallet) {
     return res.status(400).json({ message: 'reportId and requesterWallet are required' });
@@ -145,7 +149,12 @@ export const viewReport = async (req, res) => {
     const metadata = await viewReportMetadata(reportId, requesterWallet);
 
     if (metadata) {
-      res.status(200).json({ reportId: metadata[0], ipfsCid: metadata[1], sharedWith: metadata[2], isShared: metadata[3] });
+      res.status(200).json({
+        reportId: metadata[0],
+        ipfsCid: metadata[1],
+        sharedWith: metadata[2],
+        isShared: metadata[3]
+      });
     } else {
       res.status(404).json({ error: 'Report not found or access denied' });
     }

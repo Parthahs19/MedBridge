@@ -1,43 +1,25 @@
-// routes/appointments.js
+// routes/appointmentRoutes.js
 import express from 'express';
-import { Appointment } from '../models/Appointment.js';
+import {
+  getAllAppointments,
+  getAppointmentsByPatientId,
+  createAppointment,
+  deleteAppointment
+} from '../controllers/appointmentController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// GET all appointments
-router.get('/', async (req, res) => {
-  try {
-    const appointments = await Appointment.find().sort({ date: 1 });
-    res.json(appointments);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch appointments' });
-  }
-});
+// GET /api/appointments → all appointments
+router.get('/', protect, getAllAppointments);
 
-router.post('/', async (req, res) => {
-  const { doctor, patient, notes, date } = req.body;
-  if (!doctor || !patient || !date) {
-    return res.status(400).json({ error: 'Doctor, patient, and date are required' });
-  }
+// GET /api/appointments/patient/:patientId → appointments by patientId
+router.get('/patient/:patientId', protect, getAppointmentsByPatientId);
 
-  try {
-    const newAppointment = new Appointment({ doctor, patient, notes, date });
-    await newAppointment.save();
-    res.status(201).json(newAppointment);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to create appointment' });
-  }
-});
+// POST /api/appointments → create
+router.post('/', protect, createAppointment);
 
-// DELETE appointment
-router.delete('/:id', async (req, res) => {
-  try {
-    await Appointment.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Appointment deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to delete appointment' });
-  }
-});
+// DELETE /api/appointments/:id → delete
+router.delete('/:id', protect, deleteAppointment);
 
 export default router;

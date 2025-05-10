@@ -8,15 +8,28 @@ const BookAppointment = () => {
   const [formData, setFormData] = useState({
     doctor: '',
     date: '',
-    notes: ''
+    notes: '',
+    patient: ''   // Include patient here
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [isPatientValid, setIsPatientValid] = useState(true);
   const navigate = useNavigate();
 
-  // Fetch doctors list
+  // Fetch doctors + patientId
   useEffect(() => {
-    const fetchDoctors = async () => {
+    const fetchInitialData = async () => {
+      // Patient ID from localStorage
+      const patientId = localStorage.getItem('userId');
+      if (!patientId) {
+        setIsPatientValid(false);
+        setMessage('User not identified. Please log in again.');
+        return;
+      }
+
+      setFormData(prev => ({ ...prev, patient: patientId }));
+
+      // Fetch doctors
       try {
         const res = await axios.get('http://localhost:5000/api/doctors');
         const doctorNames = res.data.map(doc => doc.name);
@@ -26,7 +39,7 @@ const BookAppointment = () => {
         setDoctors(['Dr. Smith', 'Dr. Patel', 'Dr. Lee']);
       }
     };
-    fetchDoctors();
+    fetchInitialData();
   }, []);
 
   const handleChange = (e) => {
@@ -40,24 +53,12 @@ const BookAppointment = () => {
       return;
     }
 
-    // Get patientId from localStorage
-    const patientId = localStorage.getItem('userId');   // ✅ No JSON.parse()
-    
-    if (!patientId) {
-      setMessage('User not identified. Please log in again.');
-      return;
-    }
-
-    const dataToSend = {
-      ...formData,
-      patient: patientId  // IMPORTANT: Backend expects key name as 'patient'
-    };
-
     try {
       setLoading(true);
-      await axios.post('http://localhost:5000/api/appointments', dataToSend);
+      await axios.post('http://localhost:5000/api/appointments', formData);
       setMessage('Appointment booked successfully!');
-      setFormData({ doctor: '', date: '', notes: '' });
+      setFormData({ doctor: '', date: '', notes: '', patient: formData.patient }); // reset form but keep patient
+      setTimeout(() => navigate('/dashboard'), 1500); // redirect after success
     } catch (err) {
       console.error(err);
       setMessage('Error booking appointment. Please try again.');
@@ -79,33 +80,37 @@ const BookAppointment = () => {
         Book New Appointment
       </h2>
 
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label className="form-label">Select Doctor<span style={{ color: 'red' }}> *</span></label>
-          <select name="doctor" className="form-select" value={formData.doctor} onChange={handleChange} required>
-            <option value="">-- Select Doctor --</option>
-            {doctors.map((doc, idx) => (
-              <option key={idx} value={doc}>{doc}</option>
-            ))}
-          </select>
-        </div>
+      {!isPatientValid ? (
+        <div className="alert alert-danger text-center">{message}</div>
+      ) : (
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label className="form-label">Select Doctor<span style={{ color: 'red' }}> *</span></label>
+            <select name="doctor" className="form-select" value={formData.doctor} onChange={handleChange} required>
+              <option value="">-- Select Doctor --</option>
+              {doctors.map((doc, idx) => (
+                <option key={idx} value={doc}>{doc}</option>
+              ))}
+            </select>
+          </div>
 
-        <div className="mb-3">
-          <label className="form-label">Date<span style={{ color: 'red' }}> *</span></label>
-          <input type="date" name="date" className="form-control" value={formData.date} onChange={handleChange} required min={new Date().toISOString().split('T')[0]} />
-        </div>
+          <div className="mb-3">
+            <label className="form-label">Date<span style={{ color: 'red' }}> *</span></label>
+            <input type="date" name="date" className="form-control" value={formData.date} onChange={handleChange} required min={new Date().toISOString().split('T')[0]} />
+          </div>
 
-        <div className="mb-3">
-          <label className="form-label">Notes (optional)</label>
-          <textarea name="notes" className="form-control" rows="3" value={formData.notes} onChange={handleChange}></textarea>
-        </div>
+          <div className="mb-3">
+            <label className="form-label">Notes (optional)</label>
+            <textarea name="notes" className="form-control" rows="3" value={formData.notes} onChange={handleChange}></textarea>
+          </div>
 
-        <button type="submit" className="btn btn-primary w-100" disabled={loading}>
-          {loading ? 'Booking...' : 'Book Appointment'}
-        </button>
+          <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+            {loading ? 'Booking...' : 'Book Appointment'}
+          </button>
 
-        {message && <div className="alert alert-info text-center mt-3">{message}</div>}
-      </form>
+          {message && <div className="alert alert-info text-center mt-3">{message}</div>}
+        </form>
+      )}
 
       <div className="text-center mt-3">
         <button className="btn btn-secondary" onClick={() => navigate('/dashboard')}>

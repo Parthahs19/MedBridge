@@ -1,28 +1,14 @@
+// routes/prescriptionRoutes.js
 import express from 'express';
-import { Prescription } from '../models/Prescription.js';
+import { getAllPrescriptions, getPrescriptionsByPatientId } from '../controllers/prescriptionController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// GET all prescriptions
-router.get('/', async (req, res) => {
-  try {
-    const prescriptions = await Prescription.find().sort({ date: -1 });
-    res.json(prescriptions);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch prescriptions' });
-  }
-});
+// @route GET /api/prescriptions  → All prescriptions (admin or doctor)
+router.get('/', protect, getAllPrescriptions);
 
-export const getPrescriptionsByPatientId = async (req, res) => {
-  const { patientId } = req.params;
-
-  try {
-    const prescriptions = await Prescription.find({ patientId }).sort({ date: -1 });
-    res.status(200).json(prescriptions);
-  } catch (error) {
-    console.error('Error fetching prescriptions:', error);
-    res.status(500).json({ message: 'Server error fetching prescriptions' });
-  }
-};
+// @route GET /api/prescriptions/patient/:patientId → Patient's prescriptions
+router.get('/patient/:patientId', protect, getPrescriptionsByPatientId);
 
 export default router;

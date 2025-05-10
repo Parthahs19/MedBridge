@@ -5,9 +5,6 @@ import 'react-calendar/dist/Calendar.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
 
-
-
-
 const AppointmentHistory = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,8 +13,17 @@ const AppointmentHistory = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const navigate = useNavigate();
 
+  // You can replace this with real authContext or Redux later
+  const patientId = localStorage.getItem('patientId');  // Assuming stored in localStorage
+
   useEffect(() => {
-    fetch('http://localhost:5000/api/appointments')
+    if (!patientId) {
+      console.error('No patientId found');
+      setLoading(false);
+      return;
+    }
+
+    fetch(`http://localhost:5000/api/appointments/patient/${patientId}`)
       .then(res => res.json())
       .then(data => {
         setAppointments(data);
@@ -27,7 +33,7 @@ const AppointmentHistory = () => {
         console.error('Error fetching appointments:', err);
         setLoading(false);
       });
-  }, []);
+  }, [patientId]);
 
   const tileContent = ({ date, view }) => {
     if (view === 'month') {
@@ -91,56 +97,56 @@ const AppointmentHistory = () => {
 
   return (
     <>
-    <div style={{ padding: '40px 0' }}>
-      <h2 className="text-center mb-4" style={{ fontSize: '2rem', fontWeight: '700', color: '#212529' }}>
-        Appointment History
-      </h2>
-      <div style={calendarStyle}>
-        <Calendar
-          onClickDay={handleDateClick}
-          tileContent={tileContent}
-          // maxDate={new Date()} // disable future if it's only history
-        />
-      </div>
-      <div className="d-flex justify-content-center gap-4 mt-3">
-  <span><span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: '50%', background: '#6c757d', marginRight: 6 }}></span> Past</span>
-  <span><span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: '50%', background: '#198754', marginRight: 6 }}></span> Today</span>
-  <span><span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: '50%', background: '#0d6efd', marginRight: 6 }}></span> Future</span>
-</div>
+      <div style={{ padding: '40px 0' }}>
+        <h2 className="text-center mb-4" style={{ fontSize: '2rem', fontWeight: '700', color: '#212529' }}>
+          Appointment History
+        </h2>
+        <div style={calendarStyle}>
+          <Calendar
+            onClickDay={handleDateClick}
+            tileContent={tileContent}
+            // maxDate={new Date()} // disable future if only history
+          />
+        </div>
+        <div className="d-flex justify-content-center gap-4 mt-3">
+          <span><span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: '50%', background: '#6c757d', marginRight: 6 }}></span> Past</span>
+          <span><span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: '50%', background: '#198754', marginRight: 6 }}></span> Today</span>
+          <span><span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: '50%', background: '#0d6efd', marginRight: 6 }}></span> Future</span>
+        </div>
 
-      {/* Modal */}
-      {showModal && selectedAppt.length > 0 && (
-        <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header bg-primary text-white">
-                <h5 className="modal-title">
-                  Appointments on {selectedDate.toLocaleDateString()}
-                </h5>
-                <button type="button" className="btn-close btn-close-white" onClick={() => setShowModal(false)}></button>
-              </div>
-              <div className="modal-body">
-                {selectedAppt.map((appt, idx) => (
-                  <div key={idx} className="mb-3 p-3 border rounded bg-light">
-                    <p><strong>Doctor:</strong> {appt.doctorName}</p>
-                    <p><strong>Notes:</strong> {appt.notes}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Close</button>
+        {/* Modal */}
+        {showModal && selectedAppt.length > 0 && (
+          <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content">
+                <div className="modal-header bg-primary text-white">
+                  <h5 className="modal-title">
+                    Appointments on {selectedDate.toLocaleDateString()}
+                  </h5>
+                  <button type="button" className="btn-close btn-close-white" onClick={() => setShowModal(false)}></button>
+                </div>
+                <div className="modal-body">
+                  {selectedAppt.map((appt, idx) => (
+                    <div key={idx} className="mb-3 p-3 border rounded bg-light">
+                      <p><strong>Doctor:</strong> {appt.doctorName}</p>
+                      <p><strong>Notes:</strong> {appt.notes}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="modal-footer">
+                  <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Close</button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
-    <div className="text-center mt-3">
-    <button className="btn btn-success" onClick={() => navigate('/book-appointment')}>
-      Book New Appointment
-    </button>
-  </div>
-</>  
+        )}
+      </div>
+      <div className="text-center mt-3">
+        <button className="btn btn-success" onClick={() => navigate('/book-appointment')}>
+          Book New Appointment
+        </button>
+      </div>
+    </>
   );
 };
 
