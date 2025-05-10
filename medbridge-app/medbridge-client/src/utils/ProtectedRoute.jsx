@@ -4,7 +4,8 @@ import { Navigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const token = localStorage.getItem('token');
-  const user = JSON.parse(localStorage.getItem('user'));
+  const user = localStorage.getItem('user');
+
  console.log(token);
  console.log(user);
   // If no token or user data, redirect to login

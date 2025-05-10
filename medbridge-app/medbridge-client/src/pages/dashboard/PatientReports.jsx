@@ -8,7 +8,7 @@ const PatientReports = () => {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    const patientId = localStorage.getItem('userId');
+    const patientId = localStorage.getItem('id');
     if (!patientId) {
       setMessage('User not identified. Please log in again.');
       setLoading(false);
